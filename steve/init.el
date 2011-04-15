@@ -47,7 +47,7 @@
 (setq github-token "5e8fe6cfe63f0197c43745fd6fdd7e2a")
 
 ;; rails setup
-(add-to-list 'load-path (expand-file-name "~/.emacs.d/rails-minor-mode"))
+(add-to-list 'load-path (expand-file-name "~/.emacs.d/emacs-rails"))
 (require 'rails)
 (add-to-list 'auto-mode-alist '("\\.scss$" . sass-mode))
 (global-set-key "\C-c\C-m" 'magit-status)
