@@ -23,7 +23,7 @@
 (defalias 'qrr 'query-replace-regexp)
 
 ;; colors and fonts
-(add-to-list 'load-path "~/.emacs.d/color-theme")
+(add-to-list 'load-path "~/.emacs.d/steve/color-theme")
 (require 'color-theme)
 (eval-after-load "color-theme"
   '(progn
