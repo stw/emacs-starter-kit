@@ -43,8 +43,6 @@
 
 ;; github
 (setq gist-view-gist t)
-(setq github-user "stw")
-(setq github-token "5e8fe6cfe63f0197c43745fd6fdd7e2a")
 
 ;; rails setup
 (add-to-list 'load-path (expand-file-name "~/.emacs.d/emacs-rails"))
@@ -73,4 +71,3 @@
 ;;(ecb-activate)
 ;;(split-window-vertically)
 ;;(slime)
-
