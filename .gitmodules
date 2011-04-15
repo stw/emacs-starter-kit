@@ -1,0 +1,6 @@
+[submodule "ecb"]
+	path = ecb
+	url = https://github.com/emacsmirror/ecb.git
+[submodule "emacs-rails"]
+	path = emacs-rails
+	url = git@github.com:stw/emacs-rails.git
