@@ -1,3 +1,24 @@
+;; fix yas to work w/ ruby
+(defun yas/advise-indent-function (function-symbol)
+  (eval `(defadvice ,function-symbol (around yas/try-expand-first activate)
+           ,(format
+             "Try to expand a snippet before point, then call `%s' as usual"
+             function-symbol)
+           (let ((yas/fallback-behavior nil))
+             (unless (and (interactive-p)
+                          (yas/expand))
+               ad-do-it)))))
+
+(yas/advise-indent-function 'ruby-indent-line)
+(yas/advise-indent-function 'indent-and-complete)
+
+;; gnus
+(setq load-path (cons (expand-file-name "~/src/emacs/gnus/lisp") load-path))
+(require 'gnus-load)
+
+;; terminal colors
+(autoload 'ansi-color-for-comint-mode-on "ansi-color" nil t)
+(add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on)
 
 ;; ecb setup
 (add-to-list 'load-path "~/.emacs.d/ecb")
@@ -11,11 +32,13 @@
 (global-set-key "\C-w" 'backward-kill-word)
 (global-set-key "\C-x\C-k" 'kill-region)
 (global-set-key "\C-c\C-k" 'kill-region)
+(global-set-key "\C-c\C-v" 'browse-url)
+
 ;; dynamic abbreviations
 (global-set-key (kbd "C-<tab>") 'dabbrev-expand)
 (define-key minibuffer-local-map (kbd "C-<tab>") 'dabbrev-expand)
 
-;; Allow narrowing - restrict edits to page, region or defun
+  ;; Allow narrowing - restrict edits to page, region or defun
 (put 'narrow-to-defun 'disabled nil)     
 (put 'narrow-to-page 'disabled nil)     
 (put 'narrow-to-region 'disabled nil)
@@ -58,16 +81,15 @@
  "Command to kill a compilation launched by `mode-compile'" t)
 (global-set-key "\C-ck" 'mode-compile-kill)
 
-;; customize org-mode
-(setq org-startup-indented t)
-(setq org-directory "~/org")
-(setq org-mobile-inbox-for-pull "~/org/inbox.org")
-(setq org-mobile-directory "~/.dropbox_files/Dropbox/MobileOrg")
-(setq org-default-notes-file (concat org-directory "/inbox.org"))
-
+(defun eshell-banner-message "")
 (setq explicit-shell-file-name "/bin/bash")
 (display-time)
+
+(require 'slime)
+(add-to-list 'slime-lisp-implementations
+             '(sbcl ("sbcl")))
 
 ;;(ecb-activate)
 ;;(split-window-vertically)
 ;;(slime)
+

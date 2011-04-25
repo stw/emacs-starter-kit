@@ -68,3 +68,18 @@
  (if (not filename)
 	(message "Buffer '%s' is not visiting a file!" name)
  (progn 	(copy-file filename newname 1) 	(delete-file filename) 	(set-visited-file-name newname) 	(set-buffer-modified-p nil) 	t)))) 
+
+;; rails servers
+;; TODO make these buffers go into background
+(defun eshell-run (programs)
+  (loop for p in programs for i from 1 do
+        (with-current-buffer
+          (rename-buffer (format "%s - %s" (nth 1 p) (car p)) (eshell i))
+          (insert (format "cd ~/src/rails/%s ; rails %s" (car p) (nth 1 p)))
+          (eshell-send-input))
+        (delete-windows-on (format "%s - %s" (nth 1 p) (car p)))))
+
+(defun start-rails (name)
+  (eshell-run (list
+               (list name "console")
+               (list name "server"))))

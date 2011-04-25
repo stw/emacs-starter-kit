@@ -25,10 +25,10 @@
 (set-face-foreground 'rcirc-my-nick "red" nil)
 
 ;; Set typeface for rcirc buffers; this example uses variable-width Verdana size 10
-(dolist (rcirc-face (remove-if-not 
-		     (lambda (elt) (equal (cadr elt) 'custom-face))
-		     (get 'rcirc-faces 'custom-group)))
-  (set-face-font (car rcirc-face) "verdana-10"))
+;; (dolist (rcirc-face (remove-if-not 
+;; 		     (lambda (elt) (equal (cadr elt) 'custom-face))
+;; 		     (get 'rcirc-faces 'custom-group)))
+;;   (set-face-font (car rcirc-face) "verdana-10"))
 
 ;; Include date in time stamp.
 (setq rcirc-time-format "%Y-%m-%d %H:%M ")
@@ -41,10 +41,23 @@
 ;; Join these channels at startup.
 
 (setq rcirc-server-alist
-      '(("irc.freenode.net" :channels ("#emacs" "#ruby"))))
+      '(("irc.freenode.net" :channels ("#emacs" "#ruby" "#lisp"))))
+
+(setq rcirc-time-format "%Y-%m-%d %H:%M:%S ")
+;;(setq rcirc-decode-coding-system 'undecided)
+(setq rcirc-fill-column 'frame-width)
 
 ;; Connect to servers.
 ;;(rcirc)
                                         ; freenode is the default
 ;;(rcirc-connect "localhost")
                                         ; if you run bitlbee, this will connect to it
+;;(rcirc-connect "irc.net")
+;; identify <password>
+;; account add protocol user password server
+;; account on
+;; account off
+;; set strip_html true
+;; account list
+;; info nick
+;; blist all / online
