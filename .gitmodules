@@ -4,3 +4,6 @@
 [submodule "emacs-rails"]
 	path = emacs-rails
 	url = git@github.com:stw/emacs-rails.git
+[submodule "org-mode"]
+	path = org-mode
+	url = https://github.com/emacsmirror/org-mode.git
