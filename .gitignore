@@ -22,3 +22,7 @@ tramp
 history
 .org-id-locations
 *.bak
+ecb
+emacs-rails
+org-mode
+steve/auth
