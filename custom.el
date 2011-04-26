@@ -21,7 +21,7 @@
  '(org-agenda-files (quote ("~/org/business.org" "~/org/personal.org")))
  '(tabbar-mode nil nil (tabbar))
  '(visual-line-mode nil t)
- '(weblogger-config-alist (quote (("stephenwalker.com" "http://www.stephenwalker.com/xmlrpc.php" "admin" "" "1")))))
+ '(weblogger-config-alist (quote (("default" "http://www.stephenwalker.com/xmlrpc.php" "admin" "" "1") ("stephenwalker" "http://www.stephenwalker.com/xmlrpc.php" "admin" "" "1")))))
 (custom-set-faces
   ;; custom-set-faces was added by Custom.
   ;; If you edit it by hand, you could mess it up, so be careful.

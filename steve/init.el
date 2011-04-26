@@ -1,3 +1,8 @@
+;; bbdb
+(add-to-list 'load-path "~/.emacs.d/bbdb")
+(require 'bbdb)
+(bbdb-initialize)
+
 ;; fix yas to work w/ ruby
 (defun yas/advise-indent-function (function-symbol)
   (eval `(defadvice ,function-symbol (around yas/try-expand-first activate)
