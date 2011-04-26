@@ -83,3 +83,10 @@
   (eshell-run (list
                (list name "console")
                (list name "server"))))
+
+(defun refresh-file ()
+  (interactive)
+  (revert-buffer t t t)
+  )
+
+(global-set-key [f5] 'refresh-file)

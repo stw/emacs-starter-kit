@@ -7,3 +7,6 @@
 [submodule "org-mode"]
 	path = org-mode
 	url = https://github.com/emacsmirror/org-mode.git
+[submodule "weblogger"]
+	path = weblogger
+	url = https://github.com/emacsmirror/weblogger.git
