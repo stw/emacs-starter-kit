@@ -90,3 +90,73 @@
   )
 
 (global-set-key [f5] 'refresh-file)
+
+(defun split-name (s)
+  (split-string
+   (let ((case-fold-search nil))
+     (downcase
+      (replace-regexp-in-string "\\([a-z]\\)\\([A-Z]\\)" "\\1 \\2" s)))
+   "[^A-Za-z0-9]+"))
+
+(defun camelcase  (s) (mapconcat 'capitalize (split-name s) ""))
+(defun underscore (s) (mapconcat 'downcase   (split-name s) "_"))
+(defun dasherize  (s) (mapconcat 'downcase   (split-name s) "-"))
+(defun colonize   (s) (mapconcat 'capitalize (split-name s) "::"))
+
+(defun camelscore (s)
+  (cond
+   ;; ((string-match-p "\\(?:[a-z]+_\\)+[a-z]+" s)	(dasherize  s))
+        ((string-match-p "\\(?:[a-z]+-\\)+[a-z]+" s)	(camelcase  s))
+        ;; ((string-match-p "\\(?:[A-Z][a-z]+\\)+$"  s)	(colonize   s))
+        (t						(underscore s)) ))
+
+(defun camelscore-word-at-point ()
+  (interactive)
+  (let* ((case-fold-search nil)
+         (beg (and (skip-chars-backward "[:alnum:]:_-") (point)))
+         (end (and (skip-chars-forward  "[:alnum:]:_-") (point)))
+         (txt (buffer-substring beg end))
+         (cml (camelscore txt)) )
+    (if cml (progn (delete-region beg end) (insert (concat "t.string :" cml)))) ))
+
+(defun pretty-print-xml-region (begin end)
+  "Pretty format XML markup in region. You need to have nxml-mode
+http://www.emacswiki.org/cgi-bin/wiki/NxmlMode installed to do
+this.  The function inserts linebreaks to separate tags that have
+nothing but whitespace between them.  It then indents the markup
+by using nxml's indentation rules."
+  (interactive "r")
+  (save-excursion
+      (nxml-mode)
+      (goto-char begin)
+      (while (search-forward-regexp "\>[ \\t]*\<" nil t)
+        (backward-char) (insert "\n"))
+      (indent-region begin end))
+    (message "Ah, much better!"))
+
+;; bookmarks to zsh
+
+(defadvice bookmark-write-file 
+  (after local-directory-bookmarks-to-zsh-advice activate)
+  (local-directory-bookmarks-to-zsh))
+
+(defun local-directory-bookmarks-to-zsh () 
+  (interactive)
+  (when (and (require 'tramp nil t)
+             (require 'bookmark nil t))
+    (set-buffer (find-file-noselect "~/.zsh.bmk" t t))
+    (delete-region (point-min) (point-max))
+    (insert "# -*- mode:sh -*-\n")
+    (let (collect-names)
+      (mapc (lambda (item)
+              (let ((name (replace-regexp-in-string "-" "_" (car item)))
+                    (file (cdr (assoc 'filename 
+                                      (if (cddr item) item (cadr item))))))
+                (when (and (not (tramp-tramp-file-p file))
+                           (file-directory-p file))
+                  (setq collect-names (cons (concat "~" name) collect-names))
+                  (insert (format "%s=\"%s\"\n" name (expand-file-name file) name)))))
+            bookmark-alist)
+      (insert ": " (mapconcat 'identity collect-names " ") "\n"))
+    (let ((backup-inhibited t)) (save-buffer))
+    (kill-buffer (current-buffer))))

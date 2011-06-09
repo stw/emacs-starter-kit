@@ -41,11 +41,17 @@
 ;; Join these channels at startup.
 
 (setq rcirc-server-alist
-      '(("irc.freenode.net" :channels ("#emacs" "#ruby" "#lisp"))))
+      '(("irc.freenode.net" :channels ("#rubyonrails"))))
 
 (setq rcirc-time-format "%Y-%m-%d %H:%M:%S ")
 ;;(setq rcirc-decode-coding-system 'undecided)
 (setq rcirc-fill-column 'frame-width)
+
+(setq rcirc-authinfo
+                '(("freenode" nickserv "stw" "")
+;;                  ("freenode" chanserv "bob" "#bobland" "passwd99")
+;;                  ("bitlbee" bitlbee "robert" "sekrit")
+                  ))
 
 ;; Connect to servers.
 ;;(rcirc)

@@ -30,9 +30,10 @@
             (local-set-key (kbd "C-c M-o") 'bh/mail-subtree)))
 
 ;; todo state keywords C-c C-t KEY
+;; (setq org-todo-keywords (quote (( sequence "TODO(t)" "Done(d!/!)")))) 
 (setq org-todo-keywords (quote ((sequence "TODO(t)" "NEXT(n)" "STARTED(s)" "WAITING(w@/!)" "SOMEDAY(S!)" "|" "DONE(d!/!)" "CANCELLED(c@/!)")
-                                (sequence "QUOTE(Q!)" "QUOTED(D!)" "|" "APPROVED(A@)" "EXPIRED(E@)" "REJECTED(R@)")
-                                (sequence "OPEN(O!)" "|" "CLOSED(C!)"))))
+                                 (sequence "QUOTE(Q!)" "QUOTED(D!)" "|" "APPROVED(A@)" "EXPIRED(E@)" "REJECTED(R@)")
+                                 (sequence "OPEN(O!)" "|" "CLOSED(C!)"))))
 (setq org-use-fast-todo-selection t)
 (setq org-treat-S-cursor-todo-selection-as-state-change nil)
 
@@ -142,4 +143,4 @@ SCHEDULED: %t
 :STYLE: habit
 :END:"))))
 
-(find-file "~/org/business.org")
+;; (find-file "~/org/business.org")

@@ -99,7 +99,7 @@ accepts additional POST `params' as a list of (key . value) conses."
   (github-with-auth-info login token
     (let ((url-request-data (gist-make-query-string
                              `(("login" . ,login)
-                               ("token" . ,token) ,@params)))
+                               ("token" . ,token))))
           (url-max-redirecton -1)
           (url-request-method "POST"))
       (url-retrieve url callback))))

@@ -11,7 +11,7 @@
  '(ecb-layout-name "right6")
  '(ecb-options-version "2.40")
  '(ecb-show-sources-in-directories-buffer (quote always))
- '(ecb-source-path (quote (("/" "Root"))))
+ '(ecb-source-path (quote (("/" "Root") ("/Users/steve/.dropbox_files/Dropbox/src" "src"))))
  '(ecb-tip-of-the-day nil)
  '(ecb-tree-indent 2)
  '(ecb-vc-enable-support t)

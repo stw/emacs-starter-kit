@@ -105,10 +105,17 @@
 (defvar zenburn-bg+2 "#333333")
 (defvar zenburn-red+1 "#dca3a3")
 (defvar zenburn-red "#cc9393")
+
 (defvar zenburn-red-1 "#bc8383")
 (defvar zenburn-red-2 "#ac7373")
 (defvar zenburn-red-3 "#9c6363")
 (defvar zenburn-red-4 "#8c5353")
+
+;; (defvar zenburn-red-1 "#ff5959")
+;; (defvar zenburn-red-2 "#ff5959")
+;; (defvar zenburn-red-3 "#ff5959")
+;; (defvar zenburn-red-4 "#ff5959")
+
 (defvar zenburn-orange "#dfaf8f")
 (defvar zenburn-yellow "#f0dfaf")
 (defvar zenburn-yellow-1 "#e0cf9f")
@@ -278,9 +285,10 @@ static char *gnus-pointer[] = {
 	'(zenburn-primary-5 ((t (:foreground "#94bff3" :weight bold))))
 
 	'(zenburn-highlight-damp
-	   ((t (:foreground "#88b090" :background "#2e3330"))))
+    ((t (:foreground "#88b090" :background "#2e3330"))))
+; stw
 	'(zenburn-highlight-alerting
-	   ((t (:foreground "#e37170" :background "#332323"))))
+	   ((t (:foreground "#aaaaaa" :background "#390B03"))))
 	'(zenburn-highlight-subtle
 	   ((t (:background "#464646"))))
 
@@ -369,69 +377,69 @@ static char *gnus-pointer[] = {
 	'(zenburn-term-dark-cyan      ((t (:foreground "#8cd0d3"))))
 	'(zenburn-term-dark-green     ((t (:foreground "#60b48a"))))
 	'(zenburn-term-dark-magenta   ((t (:foreground "#dc8cc3"))))
-	'(zenburn-term-dark-red       ((t (:foreground "#705050"))))
+  '(zenburn-term-dark-red       ((t (:foreground "#705050"))))
 	'(zenburn-term-dark-yellow    ((t (:foreground "#dfaf8f"))))
 	`(zenburn-term-light-gray     ((t (:foreground ,zenburn-fg))))
 
 	'(plain-widget-button
-	   ((t (:weight bold))))
+    ((t (:weight bold))))
 	'(plain-widget-button-pressed
-	   ((t (:inverse-video t))))
+    ((t (:inverse-video t))))
 	'(plain-widget-documentation
-	   ((t (:inherit font-lock-doc))))
+    ((t (:inherit font-lock-doc))))
 	`(plain-widget-field
-	   ((t (:background ,zenburn-bg+2))))
+    ((t (:background ,zenburn-bg+2))))
 	'(plain-widget-inactive
-	   ((t (:strike-through t))))
+    ((t (:strike-through t))))
 	`(plain-widget-single-line-field
-	   ((t (:background ,zenburn-bg+2))))
+    ((t (:background ,zenburn-bg+2))))
 
 	`(fancy-widget-button
-	   ((t (:background ,zenburn-bg+1
-		 :box (:line-width 2 :style released-button)))))
+    ((t (:background ,zenburn-bg+1
+                     :box (:line-width 2 :style released-button)))))
 	`(fancy-widget-button-pressed
-	   ((t (:background ,zenburn-bg+1
-		 :box (:line-width 2 :style pressed-button)))))
+    ((t (:background ,zenburn-bg+1
+                     :box (:line-width 2 :style pressed-button)))))
 	`(fancy-widget-button-highlight
-	   ((t (:background ,zenburn-bg+1
-		 :box (:line-width 2 :style released-button)))))
+    ((t (:background ,zenburn-bg+1
+                     :box (:line-width 2 :style released-button)))))
 	`(fancy-widget-button-pressed-highlight
-	   ((t (:background ,zenburn-bg+1
-		 :box (:line-width 2 :style pressed-button)))))
+    ((t (:background ,zenburn-bg+1
+                     :box (:line-width 2 :style pressed-button)))))
 	'(fancy-widget-documentation
-	   ((t (:inherit font-lock-doc))))
+    ((t (:inherit font-lock-doc))))
 	`(fancy-widget-field
-	   ((t (:background ,zenburn-bg+2))))
+    ((t (:background ,zenburn-bg+2))))
 	'(fancy-widget-inactive
-	   ((t (:strike-through t))))
+    ((t (:strike-through t))))
 	`(fancy-widget-single-line-field
-	   ((t (:background ,zenburn-bg+2))))
+    ((t (:background ,zenburn-bg+2))))
 
 	'(widget-button
-	   ((t (:inherit plain-widget-button))))
+    ((t (:inherit plain-widget-button))))
 	'(widget-button-pressed
-	   ((t (:inherit fancy-widget-button-pressed))))
+    ((t (:inherit fancy-widget-button-pressed))))
 	'(widget-button-highlight
-	   ((t (:inherit fancy-widget-button-highlight))))
+    ((t (:inherit fancy-widget-button-highlight))))
 	'(widget-button-pressed-highlight
-	   ((t (:inherit fancy-widget-button-pressed-highlight))))
+    ((t (:inherit fancy-widget-button-pressed-highlight))))
 	'(widget-documentation
-	   ((t (:inherit fancy-widget-documentation))))
+    ((t (:inherit fancy-widget-documentation))))
 	'(widget-field
-	   ((t (:inherit fancy-widget-field))))
+    ((t (:inherit fancy-widget-field))))
 	'(widget-inactive
-	   ((t (:inherit fancy-widget-inactive))))
+    ((t (:inherit fancy-widget-inactive))))
 	'(widget-single-line-field
-	   ((t (:inherit fancy-widget-single-line-field))))
+    ((t (:inherit fancy-widget-single-line-field))))
 
 	`(border ((t (:background ,zenburn-bg))))
 	'(fringe ((t (:inherit zenburn-highlight-subtle))))
 	'(header-line ((t (:inherit zenburn-highlight-damp
-			    :box (:color "#2e3330" :line-width 2)))))
+                              :box (:color "#2e3330" :line-width 2)))))
 	'(mode-line ((t (:foreground "#acbc90" :background "#1e2320"
-			  :box (:color "#1e2320" :line-width 2)))))
+                               :box (:color "#1e2320" :line-width 2)))))
 	'(mode-line-inactive ((t (:background "#2e3330" :foreground "#88b090"
-				   :box (:color "#2e3330" :line-width 2)))))
+                                        :box (:color "#2e3330" :line-width 2)))))
 	`(minibuffer-prompt ((t (:foreground ,zenburn-yellow))))
 	`(Buffer-menu-buffer ((t (:inherit zenburn-primary-1))))
 
@@ -446,7 +454,7 @@ static char *gnus-pointer[] = {
 	'(match ((t (:weight bold))))
 
 	`(button ((t (:foreground ,zenburn-yellow :background "#506070"
-		       :weight bold :underline t))))
+                            :weight bold :underline t))))
 
 	`(cursor ((t (:background "#aaaaaa" :foreground nil))))
 	'(hover-highlight ((t (:underline t :foreground "#f8f893"))))
@@ -466,31 +474,31 @@ static char *gnus-pointer[] = {
 
 	`(isearch ((t (:foreground ,zenburn-fg :background "#506070"))))
 	`(isearch-lazy-highlight
-	   ((t (:foreground ,zenburn-fg :background "#1e2320" :weight normal))))
+    ((t (:foreground ,zenburn-fg :background "#1e2320" :weight normal))))
 
 	'(mtorus-highlight ((t (:inherit zenburn-highlight-bluish))))
 	'(mtorus-notify-highlight ((t (:inherit zenburn-primary-1))))
 
 	'(minimap-active-region-background ((t (:foreground nil
-						 :background "#233323"))))
+                                                      :background "#233323"))))
 	'(which-func ((t (:inherit mode-line))))
 
 	'(apt-utils-normal-package
-	   ((t (:inherit zenburn-primary-1))))
+    ((t (:inherit zenburn-primary-1))))
 	'(apt-utils-virtual-package
-	   ((t (:inherit zenburn-primary-2))))
+    ((t (:inherit zenburn-primary-2))))
 	'(apt-utils-field-keyword
-	   ((t (:inherit font-lock-doc))))
+    ((t (:inherit font-lock-doc))))
 	'(apt-utils-field-contents
-	   ((t (:inherit font-lock-comment))))
+    ((t (:inherit font-lock-comment))))
 	'(apt-utils-summary
-	   ((t (:inherit bold))))
+    ((t (:inherit bold))))
 	'(apt-utils-description
-	   ((t (:inherit default))))
+    ((t (:inherit default))))
 	'(apt-utils-version
-	   ((t (:inherit zenburn-blue))))
+    ((t (:inherit zenburn-blue))))
 	'(apt-utils-broken
-	   ((t (:inherit font-lock-warning))))
+    ((t (:inherit font-lock-warning))))
 
 	'(breakpoint-enabled-bitmap ((t (:inherit zenburn-primary-1))))
 	'(breakpoint-disabled-bitmap ((t (:inherit font-lock-comment))))
@@ -513,41 +521,41 @@ static char *gnus-pointer[] = {
 	'(cua-rectangle ((t (:inherit region))))
 
 	'(custom-button
-	   ((t (:inherit fancy-widget-button))))
+    ((t (:inherit fancy-widget-button))))
 	'(custom-button-pressed
-	   ((t (:inherit fancy-widget-button-pressed))))
+    ((t (:inherit fancy-widget-button-pressed))))
 	'(custom-changed
-	   ((t (:inherit zenburn-blue))))
+    ((t (:inherit zenburn-blue))))
 	'(custom-comment
-	   ((t (:inherit font-lock-doc))))
+    ((t (:inherit font-lock-doc))))
 	'(custom-comment-tag
-	   ((t (:inherit font-lock-doc))))
+    ((t (:inherit font-lock-doc))))
 	'(custom-documentation
-	   ((t (:inherit font-lock-doc))))
+    ((t (:inherit font-lock-doc))))
 	'(custom-link
-	   ((t (:inherit zenburn-yellow :underline t))))
+    ((t (:inherit zenburn-yellow :underline t))))
 	'(custom-tag
-	   ((t (:inherit zenburn-primary-2))))
+    ((t (:inherit zenburn-primary-2))))
 	'(custom-group-tag
-	   ((t (:inherit zenburn-primary-1))))
+    ((t (:inherit zenburn-primary-1))))
 	'(custom-group-tag-1
-	   ((t (:inherit zenburn-primary-4))))
+    ((t (:inherit zenburn-primary-4))))
 	'(custom-invalid
-	   ((t (:inherit font-lock-warning))))
+    ((t (:inherit font-lock-warning))))
 	'(custom-modified
-	   ((t (:inherit zenburn-primary-3))))
+    ((t (:inherit zenburn-primary-3))))
 	'(custom-rogue
-	   ((t (:inhrit font-lock-warning))))
+    ((t (:inhrit font-lock-warning))))
 	'(custom-saved
-	   ((t (:underline t))))
+    ((t (:underline t))))
 	'(custom-set
-	   ((t (:inverse-video t :inherit zenburn-blue))))
+    ((t (:inverse-video t :inherit zenburn-blue))))
 	'(custom-state
-	   ((t (:inherit font-lock-comment))))
+    ((t (:inherit font-lock-comment))))
 	'(custom-variable-button
-	   ((t (:weight bold :underline t))))
+    ((t (:weight bold :underline t))))
 	'(custom-variable-tag
-	   ((t (:inherit zenburn-primary-2))))
+    ((t (:inherit zenburn-primary-2))))
 
 	'(dictionary-button ((t (:inherit fancy-widget-button))))
 	'(dictionary-reference ((t (:inherit zenburn-primary-1))))
@@ -695,37 +703,37 @@ static char *gnus-pointer[] = {
 	`(gnus-signature ((t (:foreground ,zenburn-yellow))))
 
 	'(gnus-summary-selected
-	   ((t (:inherit zenburn-primary-1))))
+    ((t (:inherit zenburn-primary-1))))
 	'(gnus-summary-cancelled
-	   ((t (:inherit zenburn-highlight-alerting))))
+    ((t (:inherit zenburn-highlight-alerting))))
 
 	'(gnus-summary-low-ticked
-	   ((t (:inherit zenburn-primary-2))))
+    ((t (:inherit zenburn-primary-2))))
 	'(gnus-summary-normal-ticked
-	   ((t (:inherit zenburn-primary-2))))
+    ((t (:inherit zenburn-primary-2))))
 	'(gnus-summary-high-ticked
-	   ((t (:inherit zenburn-primary-2))))
+    ((t (:inherit zenburn-primary-2))))
 
 	'(gnus-summary-low-unread
-	   ((t (:inherit zenburn-foreground :weight normal))))
+    ((t (:inherit zenburn-foreground :weight normal))))
 	'(gnus-summary-normal-unread
-	   ((t (:inherit zenburn-foreground :weight normal))))
+    ((t (:inherit zenburn-foreground :weight normal))))
 	'(gnus-summary-high-unread
-	   ((t (:inherit zenburn-foreground :weight bold))))
+    ((t (:inherit zenburn-foreground :weight bold))))
 
 	'(gnus-summary-low-read
-	   ((t (:inherit zenburn-green :weight normal))))
+    ((t (:inherit zenburn-green :weight normal))))
 	'(gnus-summary-normal-read
-	   ((t (:inherit zenburn-green :weight normal))))
+    ((t (:inherit zenburn-green :weight normal))))
 	'(gnus-summary-high-read
-	   ((t (:inherit zenburn-green :weight bold))))
+    ((t (:inherit zenburn-green :weight bold))))
 
 	'(gnus-summary-low-ancient
-	   ((t (:inherit zenburn-blue :weight normal))))
+    ((t (:inherit zenburn-blue :weight normal))))
 	'(gnus-summary-normal-ancient
-	   ((t (:inherit zenburn-blue :weight normal))))
+    ((t (:inherit zenburn-blue :weight normal))))
 	'(gnus-summary-high-ancient
-	   ((t (:inherit zenburn-blue))))
+    ((t (:inherit zenburn-blue))))
 
 	'(help-argument-name ((t (:weight bold))))
 
@@ -741,49 +749,49 @@ static char *gnus-pointer[] = {
 	'(info-header-node ((t (:weight normal))))
 
 	'(jabber-roster-user-chatty
-	   ((t (:inherit zenburn-primary-1))))
+    ((t (:inherit zenburn-primary-1))))
 	'(jabber-roster-user-online
-	   ((t (:inherit zenburn-primary-2))))
+    ((t (:inherit zenburn-primary-2))))
 	'(jabber-roster-user-away
-	   ((t (:inherit font-lock-doc))))
+    ((t (:inherit font-lock-doc))))
 	'(jabber-roster-user-xa
-	   ((t (:inherit font-lock-comment))))
+    ((t (:inherit font-lock-comment))))
 	'(jabber-roster-user-offline
-	   ((t (:inherit zenburn-lowlight-1))))
+    ((t (:inherit zenburn-lowlight-1))))
 	'(jabber-roster-user-dnd
-	   ((t (:inherit zenburn-primary-5))))
+    ((t (:inherit zenburn-primary-5))))
 	'(jabber-roster-user-error
-	   ((t (:inherit font-lock-warning))))
+    ((t (:inherit font-lock-warning))))
 
 	'(jabber-title-small
-	   ((t (:inherit zenburn-title :height 1.2))))
+    ((t (:inherit zenburn-title :height 1.2))))
 	'(jabber-title-medium
-	   ((t (:inherit jabber-title-small :height 1.2))))
+    ((t (:inherit jabber-title-small :height 1.2))))
 	'(jabber-title-large
-	   ((t (:inherit jabber-title-medium :height 1.2))))
+    ((t (:inherit jabber-title-medium :height 1.2))))
 
 	'(jabber-chat-prompt-local
-	   ((t (:inherit zenburn-primary-1))))
+    ((t (:inherit zenburn-primary-1))))
 	'(jabber-chat-prompt-foreign
-	   ((t (:inherit zenburn-primary-2))))
+    ((t (:inherit zenburn-primary-2))))
 
 	'(jabber-rare-time-face
-	   ((t (:inherit zenburn-green+1))))
+    ((t (:inherit zenburn-green+1))))
 
 	'(jde-java-font-lock-modifier
-	   ((t (:inherit zenburn-primary-2))))
+    ((t (:inherit zenburn-primary-2))))
 	'(jde-java-font-lock-doc-tag
-	   ((t (:inherit zenburn-primary-1))))
+    ((t (:inherit zenburn-primary-1))))
 	'(jde-java-font-lock-constant
-	   ((t (:inherit font-lock-constant))))
+    ((t (:inherit font-lock-constant))))
 	'(jde-java-font-lock-package
-	   ((t (:inherit zenburn-primary-3))))
+    ((t (:inherit zenburn-primary-3))))
 	'(jde-java-font-lock-number
-	   ((t (:inherit font-lock-constant))))
+    ((t (:inherit font-lock-constant))))
 	'(jde-java-font-lock-operator
-	   ((t (:inherit font-lock-keyword))))
+    ((t (:inherit font-lock-keyword))))
 	'(jde-java-font-lock-link
-	   ((t (:inherit zenburn-primary-5 :underline t))))
+    ((t (:inherit zenburn-primary-5 :underline t))))
 
 	'(keywiz-right ((t (:inherit zenburn-primary-1))))
 	'(keywiz-wrong ((t (:inherit font-lock-warning))))
@@ -808,29 +816,29 @@ static char *gnus-pointer[] = {
 	'(nxml-text ((t (:inherit default))))
 
 	'(nxml-comment-content
-	   ((t (:inherit font-lock-comment))))
+    ((t (:inherit font-lock-comment))))
 	'(nxml-comment-delimiter
-	   ((t (:inherit nxml-comment-content))))
+    ((t (:inherit nxml-comment-content))))
 	'(nxml-processing-instruction-target
-	   ((t (:inherit zenburn-primary-2))))
+    ((t (:inherit zenburn-primary-2))))
 	'(nxml-processing-instruction-delimiter
-	   ((t (:inherit nxml-processing-instruction-target))))
+    ((t (:inherit nxml-processing-instruction-target))))
 	'(nxml-processing-instruction-content
-	   ((t (:inherit nxml-processing-instruction-target))))
+    ((t (:inherit nxml-processing-instruction-target))))
 	'(nxml-cdata-section-CDATA
-	   ((t (:inherit zenburn-primary-4))))
+    ((t (:inherit zenburn-primary-4))))
 	'(nxml-cdata-section-delimiter
-	   ((t (:inherit nxml-cdata-section-CDATA))))
+    ((t (:inherit nxml-cdata-section-CDATA))))
 	'(nxml-cdata-section-content
-	   ((t (:inherit nxml-text))))
+    ((t (:inherit nxml-text))))
 	'(nxml-entity-ref-name
-	   ((t (:inherit zenburn-primary-5))))
+    ((t (:inherit zenburn-primary-5))))
 	'(nxml-entity-ref-delimiter
-	   ((t (:inherit nxml-entity-ref-name))))
+    ((t (:inherit nxml-entity-ref-name))))
 	'(nxml-char-ref-number
-	   ((t (:inherit nxml-entity-ref-name))))
+    ((t (:inherit nxml-entity-ref-name))))
 	'(nxml-char-ref-delimiter
-	   ((t (:inherit nxml-entity-ref-delimiter))))
+    ((t (:inherit nxml-entity-ref-delimiter))))
 
 	'(nxml-tag-delimiter ((t (:inherit default))))
 	'(nxml-tag-slash ((t (:inherit default))))
@@ -839,29 +847,29 @@ static char *gnus-pointer[] = {
 	'(nxml-element-colon ((t (:inherit default))))
 
 	'(nxml-attribute-local-name
-	   ((t (:inherit zenburn-primary-3))))
+    ((t (:inherit zenburn-primary-3))))
 	'(nxml-namespace-attribute-prefix
-	   ((t (:inherit nxml-attribute-local-name))))
+    ((t (:inherit nxml-attribute-local-name))))
 	'(nxml-attribute-value
-	   ((t (:inherit font-lock-string))))
+    ((t (:inherit font-lock-string))))
 	'(nxml-attribute-value-delimiter
-	   ((t (:inherit nxml-attribute-value))))
+    ((t (:inherit nxml-attribute-value))))
 	'(nxml-attribute-prefix
-	   ((t (:inherit default))))
+    ((t (:inherit default))))
 	'(nxml-namespace-attribute-xmlns
-	   ((t (:inherit nxml-attribute-prefix))))
+    ((t (:inherit nxml-attribute-prefix))))
 	'(nxml-attribute-colon
-	   ((t (:inherit default))))
+    ((t (:inherit default))))
 	'(nxml-namespace-attribute-colon
-	   ((t (:inherit nxml-attribute-colon))))
+    ((t (:inherit nxml-attribute-colon))))
 
 	'(org-agenda-date-today ((t (:foreground "white"
-				      :slant italic :weight bold))) t)       ;; white
+                                           :slant italic :weight bold))) t)       ;; white
 	'(org-agenda-structure ((t (:inherit font-lock-comment-face))))  ;; zenburn-green
 	'(org-archived ((t (:foreground "#8f8f8f"))))                    ;; zenburn-bg slight lighter
 	'(org-column ((t (:height 98 :family "DejaVu Sans Mono"))))      ;; n/a
 	'(org-checkbox ((t (:background "#5f5f5f" :foreground "white"    ;; zenburn-fg on zenburn-bg+2
-			     :box (:line-width 1 :style released-button))))) ;;   - turn checkboxes into buttons
+                                  :box (:line-width 1 :style released-button))))) ;;   - turn checkboxes into buttons
 	'(org-date ((t (:foreground "#8cd0d3" :underline t))))           ;; zenburn-blue
 	'(org-deadline-announce ((t (:foreground "#bc8383"))))           ;; zenburn-red-1
 	'(org-done ((t (:bold t :weight bold :foreground "#afd8af"))))   ;; zenburn-green+3
@@ -877,7 +885,7 @@ static char *gnus-pointer[] = {
 	'(org-level-7 ((t (:foreground "#5c888b"))))                     ;; zenburn-blue-3
 	'(org-level-8 ((t (:foreground "#4c7073"))))                     ;; zenburn-blue-4
 	'(org-link ((t (:foreground "#d0bf8f" :underline t))))           ;; zenburn-yellow-2
-					;'(org-priority faces                                            TODO
+                                        ;'(org-priority faces                                            TODO
 	'(org-scheduled ((t (:foreground "#bfebbf"))))                   ;; zenburn-green+4
 	'(org-scheduled-previously ((t (:foreground "#8c5353"))))        ;; zenburn-red-4
 	'(org-scheduled-today ((t (:foreground "#94bff3"))))             ;; zenburn-blue+1
@@ -910,45 +918,45 @@ static char *gnus-pointer[] = {
 	'(strokes-char ((t (:inherit font-lock-keyword))))
 
 	'(todoo-item-header
-	   ((t (:inherit zenburn-primary-1))))
+    ((t (:inherit zenburn-primary-1))))
 	'(todoo-item-assigned-header
-	   ((t (:inherit zenburn-primary-2))))
+    ((t (:inherit zenburn-primary-2))))
 	`(todoo-sub-item-header
-	   ((t (:foreground ,zenburn-yellow))))
+    ((t (:foreground ,zenburn-yellow))))
 
 	'(tuareg-font-lock-governing
-	   ((t (:inherit zenburn-primary-2))))
+    ((t (:inherit zenburn-primary-2))))
 	'(tuareg-font-lock-interactive-error
-	   ((t (:inherit font-lock-warning))))
+    ((t (:inherit font-lock-warning))))
 	'(tuareg-font-lock-interactive-output
-	   ((t (:inherit zenburn-primary-3))))
+    ((t (:inherit zenburn-primary-3))))
 	'(tuareg-font-lock-operator
-	   ((t (:inherit font-lock-operator))))
+    ((t (:inherit font-lock-operator))))
 
 	'(w3m-form-button
-	   ((t (:inherit widget-button))))
+    ((t (:inherit widget-button))))
 	'(w3m-form-button-pressed
-	   ((t (:inherit widget-button-pressed))))
+    ((t (:inherit widget-button-pressed))))
 	'(w3m-form-button-mouse
-	   ((t (:inherit widget-button-pressed))))
+    ((t (:inherit widget-button-pressed))))
 	'(w3m-tab-unselected
-	   ((t (:box (:line-width 1 :style released-button)))))
+    ((t (:box (:line-width 1 :style released-button)))))
 	'(w3m-tab-selected
-	   ((t (:box (:line-width 1 :style pressed-button)))))
+    ((t (:box (:line-width 1 :style pressed-button)))))
 	'(w3m-tab-unselected-retrieving
-	   ((t (:inherit (w3m-tab-unselected widget-inactive)))))
+    ((t (:inherit (w3m-tab-unselected widget-inactive)))))
 	'(w3m-tab-selected-retrieving
-	   ((t (:inherit (w3m-tab-selected widget-inactive)))))
+    ((t (:inherit (w3m-tab-selected widget-inactive)))))
 	'(w3m-tab-background
-	   ((t (:inherit zenburn-highlight-subtle))))
+    ((t (:inherit zenburn-highlight-subtle))))
 	'(w3m-anchor
-	   ((t (:inherit zenburn-primary-1))))
+    ((t (:inherit zenburn-primary-1))))
 	'(w3m-arrived-anchor
-	   ((t (:inherit zenburn-primary-2))))
+    ((t (:inherit zenburn-primary-2))))
 	'(w3m-image
-	   ((t (:inherit zenburn-primary-3))))
+    ((t (:inherit zenburn-primary-3))))
 	'(w3m-form
-	   ((t (:inherit widget-field))))
+    ((t (:inherit widget-field))))
 
 	`(hl-line ((t (:background ,zenburn-bg-1))))
 
@@ -959,18 +967,18 @@ static char *gnus-pointer[] = {
 	'(flyspell-incorrect ((t (:inherit font-lock-warning))))
 
 	`(elscreen-tab-other-screen ((t ((:foreground ,zenburn-fg
-					   :background ,zenburn-green-1)))))
+                                                :background ,zenburn-green-1)))))
 	`(elscreen-tab-current-screen ((t (:foreground ,zenburn-blue+1
-					    :background "#1e2320"))))
+                                                 :background "#1e2320"))))
 
 	'(wl-highlight-message-headers ((t (:inherit zenburn-red+1))))
 	'(wl-highlight-message-header-contents ((t (:inherit zenburn-green))))
 	'(wl-highlight-message-important-header-contents
-	   ((t (:inherit zenburn-yellow))))
+    ((t (:inherit zenburn-yellow))))
 	'(wl-highlight-message-important-header-contents2
-	   ((t (:inherit zenburn-blue))))
+    ((t (:inherit zenburn-blue))))
 	'(wl-highlight-message-unimportant-header-contents
-	   ((t (:inherit zenburn-term-dark-gray))))   ;; reuse term
+    ((t (:inherit zenburn-term-dark-gray))))   ;; reuse term
 	'(wl-highlight-message-citation-header ((t (:inherit zenburn-red))))
 
 	'(wl-highlight-message-cited-text-1 ((t (:inherit zenburn-green))))
@@ -984,7 +992,7 @@ static char *gnus-pointer[] = {
 	'(wl-highlight-summary-new ((t (:foreground "#e89393"))))
 
 	`(wl-highlight-summary-displaying ((t (:underline t
-						:foreground ,zenburn-yellow-2))))
+                                                    :foreground ,zenburn-yellow-2))))
 
 	'(wl-highlight-thread-indent ((t (:foreground "#ecbcec"))))
 	'(wl-highlight-summary-thread-top ((t (:foreground "#efdcbc"))))
