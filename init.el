@@ -48,7 +48,7 @@
 (require 'recentf)
 
 ;; backport some functionality to Emacs 22 if needed
-(require 'dominating-file)
+;;(require 'dominating-file)
 
 ;; Load up starter kit customizations
 
@@ -71,7 +71,7 @@
       user-specific-dir (concat dotfiles-dir user-login-name))
 (add-to-list 'load-path user-specific-dir)
 
-(if (file-exists-p system-specific-config) (load system-specific-config))
+;;(if (file-exists-p system-specific-config) (load system-specific-config))
 (if (file-exists-p user-specific-config) (load user-specific-config))
 (if (file-exists-p user-specific-dir)
   (mapc #'load (directory-files user-specific-dir nil ".*el$")))
