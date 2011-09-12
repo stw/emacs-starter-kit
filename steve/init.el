@@ -1,6 +1,8 @@
 ;; command logging
 ;; (add-hook 'rinari-mode-hook (function mwe:log-keyboard-commands))
 
+(require 'php-mode) 
+
 ;; coffee-mode
 (add-to-list 'load-path "~/.emacs.d/coffee-mode")
 (require 'coffee-mode)
@@ -9,6 +11,10 @@
 ;;(require 'js2-mode)
 ;;(autoload 'js2-mode "js2-mode" nil t)
 ;;(add-to-list 'auto-mode-alist '("\\.js$" . js2-mode))
+
+(autoload #'espresso-mode "espresso" "Start espresso-mode" t)
+(add-to-list 'auto-mode-alist '("\\.js$" . espresso-mode))
+(add-to-list 'auto-mode-alist '("\\.json$" . espresso-mode))
 
 ;; bookmark+
 (add-to-list 'load-path "~/.emacs.d/bookmark+") 
@@ -131,4 +137,14 @@
 ;;(ecb-activate)
 ;;(split-window-vertically)
 ;;(slime)
+
+(defun backward-up-sexp (arg)
+    (interactive "p")
+      (let ((ppss (syntax-ppss)))
+            (cond ((elt ppss 3)
+                              (goto-char (elt ppss 8))
+                                         (backward-up-sexp (1- arg)))
+                            ((backward-up-list arg)))))
+
+(global-set-key [remap backward-up-list] 'backward-up-sexp) 
 

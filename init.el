@@ -76,3 +76,6 @@
 (if (file-exists-p user-specific-dir)
   (mapc #'load (directory-files user-specific-dir nil ".*el$")))
 
+(setq slime-lisp-implementations
+      '((sbcl ("/opt/local/bin/sbcl"))
+     (clojure ("/Users/steve/bin/clojure") :init swank-clojure-init)))
