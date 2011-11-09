@@ -31,8 +31,10 @@
 (setq custom-file (concat dotfiles-dir "custom.el"))
 
 (require 'package)
-(dolist (source '(("technomancy" . "http://repo.technomancy.us/emacs/")
-                  ("elpa" . "http://tromey.com/elpa/")))
+(dolist (source '(
+;;                  ("technomancy" . "http://repo.technomancy.us/emacs/")
+;;                  ("elpa" . "http://tromey.com/elpa/")
+                  ("marmalade" . "http://marmalade-repo.org/packages/")))
   (add-to-list 'package-archives source t))
 (package-initialize)
 (require 'starter-kit-elpa)
@@ -57,7 +59,12 @@
 (require 'starter-kit-misc)
 (require 'starter-kit-registers)
 (require 'starter-kit-eshell)
+
+(add-to-list 'load-path "~/.emacs.d/slime") 
+(add-to-list 'load-path "~/.emacs.d/mmm-mode") 
+(add-to-list 'load-path "~/.emacs.d/psgml") 
 (require 'starter-kit-lisp)
+
 (require 'starter-kit-perl)
 (require 'starter-kit-ruby)
 (require 'starter-kit-js)
@@ -76,6 +83,7 @@
 (if (file-exists-p user-specific-dir)
   (mapc #'load (directory-files user-specific-dir nil ".*el$")))
 
-(setq slime-lisp-implementations
-      '((sbcl ("/opt/local/bin/sbcl"))
-     (clojure ("/Users/steve/bin/clojure") :init swank-clojure-init)))
+;;(setq slime-lisp-implementations
+;;      '((sbcl ("/usr/local/bin/sbcl"))
+;;     (clojure ("/Users/steve/bin/clojure") :init swank-clojure-init)))
+
