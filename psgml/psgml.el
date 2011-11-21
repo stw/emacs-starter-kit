@@ -1,5 +1,5 @@
 ;;; psgml.el --- SGML-editing mode with parsing support
-;; $Id: psgml.el,v 2.70 2005/03/02 19:44:04 lenst Exp $
+;; $Id: psgml.el,v 2.76 2008/06/21 16:13:50 lenst Exp $
 
 ;; Copyright (C) 1993-2002 Lennart Staflin
 ;; Copyright (C) 1992 Free Software Foundation, Inc.
@@ -52,7 +52,7 @@
 
 ;;; Code:
 
-(defconst psgml-version "1.3.2"
+(defconst psgml-version "1.3.3"
   "Version of psgml package.")
 
 (defconst psgml-maintainer-address "lenst@lysator.liu.se")
@@ -65,6 +65,7 @@
 (defmacro sgml-debug (&rest x)
   (list 'if 'sgml-debug (cons 'message x)))
 
+(require 'psgml-vars)
 
 ;;;; Variables
 
@@ -87,96 +88,6 @@ Otherwise put explicit properties.")
   "Is this an XML document?")
 (make-variable-buffer-local 'sgml-xml-p)
 
-;;; User settable options:
-
-(defvar sgml-insert-defaulted-attributes nil
-  "*Controls whether defaulted attributes (not #FIXED) are inserted explicitly
-or not. nil means don't insert, t means insert.")
-
-(defvar sgml-insert-missing-element-comment t
-  "*If true, and sgml-auto-insert-required-elements also true,
-`sgml-insert-element' will insert a comment if there is an element required
-but there is more than one to choose from." )
-
-(defvar sgml-insert-end-tag-on-new-line nil
-  "*If true, `sgml-insert-element' will put the end-tag on a new line
-after the start-tag. Useful on slow terminals if you find the end-tag after
-the cursor irritating." )
-
-(defvar sgml-doctype nil
-  "*If non-nil the name of a file that contains the doctype declaration to use.
-declaration to use.
-Setting this variable automatically makes it local to the current buffer.")
-(put 'sgml-doctype 'sgml-type 'string)
-(make-variable-buffer-local 'sgml-doctype)
-  
-(defvar sgml-system-identifiers-are-preferred nil
-  "*Controls lookup of external entities.
-nil means look up external entities by searching the catalogs
-in `sgml-local-catalogs' and `sgml-catalog-files' and only if the
-entity is not found in the catalogs use a given system identifier.
-Non-nil means use a system identifier for the entity if one is given.
-If no system identifier is given the catalogs will searched.")
-
-(defvar sgml-range-indicator-max-length 9
-  "*Control of menu indicators.
-Maximum number of characters used from the first and last entry
-of a submenu to indicate the range of that menu.")
-
-(defvar sgml-default-doctype-name nil
-  "*If non-nil, document type name to use if no DTD is present.")
-(put 'sgml-default-doctype-name 'sgml-type 'string-or-nil)
-
-(defvar sgml-markup-faces
-  ;; Fixme: are the font-lock correspondences here the most appopriate
-  ;; ones?  I don't recall whence this set came.  -- fx
-  `((start-tag . ,(if (facep 'font-lock-function-name-face)
-		      'font-lock-function-name-face
-		    'bold))
-    (end-tag . ,(if (facep 'font-lock-function-name-face)
-		    'font-lock-function-name-face
-		  'bold))
-    (comment . ,(if (facep 'font-lock-comment-face)
-		    'font-lock-comment-face
-		  'bold))
-    (pi . ,(if (facep 'font-lock-type-face)
-	       'font-lock-type-face
-	     'bold))
-    (sgml . ,(if (facep 'font-lock-type-face)
-		 'font-lock-type-face
-	       'bold))
-    (doctype . ,(if (facep 'font-lock-keyword-face)
-		    'font-lock-keyword-face
-		  'bold))
-    (entity . ,(if (facep 'font-lock-string-face)
-		   'font-lock-string-face
-		 'bold))
-    (shortref . ,(if (facep 'font-lock-string-face)
-		     'font-lock-string-face
-		   'bold))
-    (ignored . ,(if (facep 'font-lock-constant-face)
-		    'font-lock-constant-face
-		  'default))
-    (ms-start . ,(if (facep 'font-lock-constant-face)
-		    'font-lock-constant-face
-		  'default))
-    (ms-end . ,(if (facep 'font-lock-constant-face)
-		    'font-lock-constant-face
-		  'default)))
-  "*Alist of markup to face mappings.
-Element are of the form (MARKUP-TYPE . FACE).
-Possible values for MARKUP-TYPE are:
-comment	- comment declaration
-doctype	- doctype declaration
-end-tag
-ignored	- ignored marked section
-ms-end	- marked section start, if not ignored
-ms-start- marked section end, if not ignored
-pi	- processing instruction
-sgml	- SGML declaration
-start-tag
-entity  - general entity reference
-shortref- short reference")
 
 (defvar sgml-buggy-subst-char-in-region 
   (or (not (boundp 'emacs-minor-version))
@@ -187,172 +98,27 @@ shortref- short reference")
 The bug sets the buffer modified.  If this is set, folding commands
 will be slower.")
 
-(defvar sgml-set-face nil
-  "*If non-nil, psgml will set the face of parsed markup.")
-(put 'sgml-set-face 'sgml-desc "Set face of parsed markup")
 
 (defvar sgml-live-element-indicator nil
-  "*If non-nil, indicate current element in mode line.
+  "OBSOLETE
+If non-nil, indicate current element in mode line.
 This may be slow.")
-
-(defvar sgml-auto-activate-dtd nil
-  "*If non-nil, loading a sgml-file will automatically try to activate its DTD.
-Activation means either to parse the document type declaration or to
-load a previously saved parsed DTD.  The name of the activated DTD
-will be shown in the mode line.")
-(put 'sgml-auto-activate-dtd 'sgml-desc "Auto Activate DTD")
-
-(defvar sgml-offer-save t
-  "*If non-nil, ask about saving modified buffers before \\[sgml-validate] is run.")
-
-(defvar sgml-parent-document nil
-  "*How to handle the current file as part of a bigger document.
-
-The variable describes how the current file's content fit into the element
-hierarchy.  The value should have the form
-
-  (PARENT-FILE CONTEXT-ELEMENT* TOP-ELEMENT (HAS-SEEN-ELEMENT*)?)
-
-PARENT-FILE	is a string, the name of the file containing the
-		document entity.
-CONTEXT-ELEMENT is a string, that is the name of an element type.
-		It can occur 0 or more times and is used to set up
-		exceptions and short reference map.  Good candidates
-		for these elements are the elements open when the
-		entity pointing to the current file is used.
-TOP-ELEMENT	is a string that is the name of the element type
-		of the top level element in the current file.  The file
-		should contain one instance of this element, unless
-		the last \(Lisp) element of `sgml-parent-document' is a
-		list.  If it is a list, the top level of the file
-		should follow the content model of top-element.
-HAS-SEEN-ELEMENT is a string that is the name of an element type.  This
-	        element is satisfied in the content model of top-element.
-
-Setting this variable automatically makes it local to the current buffer.")
-(make-variable-buffer-local 'sgml-parent-document)
-(put 'sgml-parent-document 'sgml-type 'list)
-
-(defvar sgml-tag-region-if-active nil
-  "*If non-nil, the Tags menu will tag a region if the region is 
-considered active by emacs.  If nil, region must be active and
-transient-mark-mode must be on for the region to be tagged.")
-
-(defvar sgml-normalize-trims t
-  "*If non-nil, sgml-normalize will trim off white space from end of element
-when adding end tag.")
-
-(defvar sgml-omittag t
-  "*Non-nil means use OMITTAG YES.
-
-Setting this variable automatically makes it local to the current buffer.")
-
-(make-variable-buffer-local 'sgml-omittag)
-(put 'sgml-omittag 'sgml-desc "OMITTAG")
-
-(defvar sgml-shorttag t
-  "*Non-nil means use SHORTTAG YES.
-
-Setting this variable automatically makes it local to the current buffer.")
-
-(make-variable-buffer-local 'sgml-shorttag)
-(put 'sgml-shorttag 'sgml-desc "SHORTTAG")
-
-(defvar sgml-namecase-general t
-  "*Non-nil means use NAMECASE GENERAL YES.
-
-Setting this variable automatically makes it local to the current buffer.")
-
-(make-variable-buffer-local 'sgml-namecase-general)
-(put 'sgml-namecase-general 'sgml-desc "NAMECASE GENERAL")
 
 
 
 ;;[lenst/1998-03-09 19:51:55]
+;; sgml-namecase-entity would reflect the NAMECASE ENTITY setting
+;; in the SGML Declaration used. Currently only "NO" (encoded as nil)
+;; is supported.
 (defconst sgml-namecase-entity nil)
 
-(defvar sgml-general-insert-case 'lower
-  "*The case that will be used for general names in inserted markup.
-This can be the symbol `lower' or `upper'.  Only effective if
-`sgml-namecase-general' is true.")
-(put 'sgml-general-insert-case 'sgml-type '(lower upper))
-
+;; What letter case to use when inserting entity names when
+;; sgml-namecase-entity is non-nil. It's never non-nil so this is kind
+;; of useless.
 (defvar sgml-entity-insert-case nil)
 
 
-(defvar sgml-minimize-attributes nil
-  "*Determines minimization of attributes inserted by edit-attributes.
-Actually two things are done
-1. If non-nil, omit attribute name, if attribute value is from a token group.
-2. If `max', omit attributes with default value.
-
-Setting this variable automatically makes it local to the current buffer.")
-
-(make-variable-buffer-local 'sgml-minimize-attributes)
-(put 'sgml-minimize-attributes 'sgml-type
-     '(("No" . nil) ("Yes" . t) ("Max" . max)))
-
-(defvar sgml-always-quote-attributes t
-  "*Non-nil means quote all attribute values inserted after editing attributes.
-Setting this variable automatically makes it local to the current buffer.")
-
-(make-variable-buffer-local 'sgml-always-quote-attributes)
-
-(defvar sgml-auto-insert-required-elements t
-  "*If non-nil, automatically insert required elements in the content
-of an inserted element.")
-
-(defvar sgml-balanced-tag-edit t
-  "*If non-nil, context menu inserts start-end tag pairs.")
-
-(defvar sgml-omittag-transparent (not sgml-balanced-tag-edit)
-  "*If non-nil, will show legal tags inside elements with omitable start tags
-and legal tags beyond omitable end tags.")
-
-(defvar sgml-leave-point-after-insert nil
-  "*If non-nil, the point will remain after inserted tag(s).
-If nil, the point will be placed before the inserted tag(s).")
-
-(defvar sgml-warn-about-undefined-elements t
-  "*If non-nil, print a warning when a tag for an undefined element is found.")
-
-(defvar sgml-warn-about-undefined-entities t
-  "*If non-nil, print a warning when an undefined entity is found.")
-
-(defvar sgml-ignore-undefined-elements nil
-  "*If non-nil, recover from an undefined element by ignoring the tag.
-If nil, recover from an undefined element by assuming it can occur any
-where and has content model ANY.")
-
-(defvar sgml-recompile-out-of-date-cdtd 'ask
-  "*If non-nil, out of date compiled DTDs will be automatically recompiled.
-If the value is `ask', PSGML will ask before recompiling. A `nil'
-value will cause PSGML to silently load an out of date compiled DTD.
-A DTD that refers to undefined external entities is always out of
-date, thus in such case it can be useful to set this variable to
-`nil'.")
-(put 'sgml-recompile-out-of-date-cdtd 'sgml-type '(("No" . nil)
-						   ("Yes" . t)
-						   ("Ask" . ask)))
-
-(defvar sgml-trace-entity-lookup nil
-  "*If non-nil, log messages about catalog files used to look for
-external entities.") 
-
-(defvar sgml-indent-step 2
-  "*How much to increment indent for every element level.
-If nil, no indentation.
-Setting this variable automatically makes it local to the current buffer.")
-(make-variable-buffer-local 'sgml-indent-step)
-(put 'sgml-indent-step 'sgml-type '(("None" . nil) 0 1 2 3 4 5 6 7 8))
-
-(defvar sgml-indent-data nil
-  "*If non-nil, indent in data/mixed context also.
-Setting this variable automatically makes it local to the current buffer.")
-(make-variable-buffer-local 'sgml-indent-data)
-
-(defvar sgml-content-indent-function 'sgml-indent-according-to-level)
-(defvar sgml-attribute-indent-function 'sgml-indent-according-to-stag)
+;;; User settable options:
 
 
 (defun sgml-parse-colon-path (cd-path)
@@ -437,55 +203,6 @@ Can be changed in the Local variables section of the file.")
 (put 'sgml-default-dtd-file 'sgml-type 'string)
 (put 'sgml-default-dtd-file 'sgml-desc "Default (saved) DTD File")
 
-(defvar sgml-exposed-tags '()
-  "*The list of tag names that remain visible, despite \\[sgml-hide-tags].
-Each name is a lowercase string, and start-tags and end-tags must be
-listed individually.
-
-`sgml-exposed-tags' is local to each buffer in which it has been set;
-use `setq-default' to set it to a value that is shared among buffers.")
-(make-variable-buffer-local 'sgml-exposed-tags)
-(put 'sgml-exposed-tags 'sgml-type 'list)
-
-
-(defvar sgml-custom-markup nil
-  "*Menu entries to be added to the Markup menu.
-The value should be a list of lists of two strings.  The first
-string is the menu line and the second string is the text inserted
-when the menu item is chosen.  The second string can contain a \\r
-where the cursor should be left.  Also if a selection is made
-according the same rules as for the Tags menu, the selection is
-replaced with the second string and \\r is replaced with the
-selection.
-
-Example:
-
-  ((\"Version1\" \"<![%Version1[\\r]]>\")
-   (\"New page\"  \"<?NewPage>\"))
-")
-
-(defvar sgml-custom-dtd nil
-  "Menu entries to be added to the DTD menu.
-The value should be a list of entries to be added to the DTD menu.
-Every entry should be a list.  The first element of the entry is a string
-used as the menu entry.  The second element is a string containing a
-doctype declaration (this can be nil if no doctype).  The rest of the
-list should be a list of variables and values.  For backward
-compatibility a single string instead of a variable is assigned to
-`sgml-default-dtd-file'.  All variables are made buffer local and are also
-added to the buffers local variables list.
-
-Example:
-   ((\"HTML\" nil
-     sgml-default-dtd-file \"~/sgml/html.ced\"
-     sgml-omittag nil sgml-shorttag nil)
-    (\"HTML+\" \"<!doctype htmlplus system 'htmlplus.dtd'>\"
-     \"~/sgml/htmlplus.ced\"
-     sgml-omittag t sgml-shorttag nil)
-    (\"DOCBOOK\" \"<!doctype docbook system 'docbook.dtd'>\"
-     \"~/sgml/docbook.ced\"
-     sgml-omittag nil sgml-shorttag t)))
-")
 
 
 ;;; Faces used in edit attribute buffer:
@@ -517,11 +234,13 @@ string will be replaced according to the list below, if the string contains
 
 %b means the visited file of the current buffer
 %s means the SGML declaration specified in the sgml-declaration variable
-%d means the file containing the DOCTYPE declaration, if not in the buffer 
+%d means the file containing the DOCTYPE declaration, if not in the buffer
 ")
 (make-variable-buffer-local 'sgml-validate-command)
 
-(defvar sgml-xml-validate-command "nsgmls -wxml -s %s %s"
+(defvar sgml-xml-validate-command
+  (concat "/bin/sh -c \"SP_CHARSET_FIXED=YES SP_ENCODING=XML "
+          "nsgmls -wxml -mdeclaration/xml.soc -gues %s %s\"")
   "*The default for `sgml-validate-command' in XML mode.")
 
 (defvar sgml-validate-files nil
@@ -579,7 +298,6 @@ Should return a string suitable form printing in the echo area.")
 (defconst sgml-user-options
   '(
     sgml-set-face
-    sgml-live-element-indicator
     sgml-auto-activate-dtd
     sgml-offer-save
     sgml-tag-region-if-active
@@ -722,9 +440,9 @@ as that may change."
 
 (defun sgml-markup (entry text)
   (cons entry
-	(` (lambda ()
-	     (interactive)
-	     (sgml-insert-markup (, text))))))
+	`(lambda ()
+           (interactive)
+           (sgml-insert-markup ,text))))
 
 (defun sgml-insert-markup (text)
   (let ((end (sgml-mouse-region))
@@ -800,7 +518,6 @@ as that may change."
 	 'sgml-indent-data
 	 'sgml-indent-step
 	 'sgml-leave-point-after-insert
-	 'sgml-live-element-indicator
 	 'sgml-local-catalogs
 	 'sgml-local-ecat-files
 	 'sgml-markup-faces
@@ -896,54 +613,55 @@ as that may change."
 (easy-menu-define
  sgml-main-menu sgml-mode-map "Main menu"
  '("SGML"
-   ["Parse DTD"  sgml-parse-prolog t]
+   ["Load Doctype"              sgml-load-doctype               t]
    ("DTD Info"
-    ["General DTD info"	sgml-general-dtd-info           t]
+    ["Describe DTD"             sgml-describe-dtd               t]
     ["Describe element type"	sgml-describe-element-type	t]
     ["Describe entity"		sgml-describe-entity		t]
     ["List elements" 		sgml-list-elements 		t]
-    ["List attributes" 	sgml-list-attributes 		t]
+    ["List attributes"          sgml-list-attributes 		t]
     ["List terminals" 		sgml-list-terminals 		t]
     ["List content elements" 	sgml-list-content-elements 	t]
     ["List occur in elements" 	sgml-list-occur-in-elements 	t])
+   ("Insert DTD")
    ("Insert Markup"
-    ["Insert Element"	sgml-element-menu	t]
-    ["Insert Start-Tag" sgml-start-tag-menu	t]
-    ["Insert End-Tag"	sgml-end-tag-menu	t]
-    ["End Current Element"	sgml-insert-end-tag t]
-    ["Tag Region"	sgml-tag-region-menu	t]
-    ["Insert Attribute"  sgml-attrib-menu	t]
-    ["Insert Entity"	sgml-entities-menu	t]
-    ["Add Element to Element"	sgml-add-element-menu	t]
-    ("Insert DTD")   
-    ("Custom markup"   "---"))
+    ["Insert Element"           sgml-element-menu	t]
+    ["Insert Start-Tag"         sgml-start-tag-menu	t]
+    ["Insert End-Tag"           sgml-end-tag-menu	t]
+    ["End Current Element"	sgml-insert-end-tag     t]
+    ["Tag Region"               sgml-tag-region-menu	t]
+    ["Insert Attribute"         sgml-attrib-menu	t]
+    ["Insert Entity"            sgml-entities-menu	t]
+    ["Add Element to Element"	sgml-add-element-menu	t])
+   ("Custom markup"   "---")
    "--"
-   ["Show Context"	sgml-show-context t]
-   ["What Element"	sgml-what-element t]
-   ["List Valid Tags"	sgml-list-valid-tags t]
-   ["Validate"		sgml-validate t]
+   ["Show Context"              sgml-show-context       t]
+   ["What Element"              sgml-what-element       t]
+   ["List Valid Tags"           sgml-list-valid-tags    t]
+   ["Validate"                  sgml-validate           t]
+   ["Show Structure"            sgml-show-structure     t]
    "--"
    ("Move"
-    ["Next trouble spot" sgml-next-trouble-spot t]
-    ["Next data field"   sgml-next-data-field   t]
-    ["Forward element"	sgml-forward-element t]
-    ["Backward element"  sgml-backward-element t]
-    ["Up element"	sgml-up-element t]
-    ["Down element"	sgml-down-element t]
-    ["Backward up element" sgml-backward-up-element t]
-    ["Beginning of element" sgml-beginning-of-element t]
-    ["End of element"	sgml-end-of-element t])
+    ["Next trouble spot"        sgml-next-trouble-spot  t]
+    ["Next data field"          sgml-next-data-field    t]
+    ["Forward element"          sgml-forward-element    t]
+    ["Backward element"         sgml-backward-element   t]
+    ["Up element"               sgml-up-element         t]
+    ["Down element"             sgml-down-element       t]
+    ["Backward up element"      sgml-backward-up-element        t]
+    ["Beginning of element"     sgml-beginning-of-element       t]
+    ["End of element"           sgml-end-of-element     t])
    ("View"
-    ["Fold Element"	sgml-fold-element	t]
-    ["Fold Subelement"	sgml-fold-subelement	t]
-    ["Unfold Line"	sgml-unfold-line	t]
-    ["Unfold Element"	sgml-unfold-element	t]
-    ["Expand"		sgml-expand-element	t]
-    ["Fold Region"	sgml-fold-region	t]
-    ["Unfold All"	sgml-unfold-all		t]
+    ["Fold Element"             sgml-fold-element       t]
+    ["Fold Subelement"          sgml-fold-subelement    t]
+    ["Unfold Line"              sgml-unfold-line        t]
+    ["Unfold Element"           sgml-unfold-element     t]
+    ["Expand"                   sgml-expand-element     t]
+    ["Fold Region"              sgml-fold-region        t]
+    ["Unfold All"               sgml-unfold-all         t]
     ["Hide Tags"		sgml-hide-tags		t]
-    ["Hide Attributes"	sgml-hide-attributes	t]
-    ["Show All Tags"	sgml-show-tags		t])
+    ["Hide Attributes"          sgml-hide-attributes    t]
+    ["Show All Tags"            sgml-show-tags  t])
    "--"
    ["Normalize Document"        sgml-normalize	t]
    ["Normalize Element"		sgml-normalize-element t]
@@ -1040,13 +758,13 @@ as that may change."
 (defun sgml-compute-insert-dtd-items ()
   (loop for e in sgml-custom-dtd collect
         (vector (first e)
-                (` (sgml-doctype-insert (, (cadr e)) '(, (cddr e))))
+                `(sgml-doctype-insert ,(cadr e) ',(cddr e))
                 t)))
 
 (defun sgml-compute-custom-markup-items ()
   (loop for e in sgml-custom-markup collect
         (vector (first e)
-                (` (sgml-insert-markup  (, (cadr e))))
+                `(sgml-insert-markup  ,(cadr e))
                 t)))
 
 (defun sgml-build-custom-menus ()
@@ -1056,10 +774,10 @@ as that may change."
 		(numberp button3))
       (local-set-key [button3] button3))
     (when sgml-custom-dtd
-      (easy-menu-change '("SGML" "Insert Markup") "Insert DTD"
+      (easy-menu-change '("SGML") "Insert DTD"
 			(sgml-compute-insert-dtd-items)))
     (when sgml-custom-markup
-      (easy-menu-change '("SGML" "Insert Markup") "Custom markup"
+      (easy-menu-change '("SGML") "Custom markup"
 			(sgml-compute-custom-markup-items))))
   nil)
 
@@ -1209,15 +927,6 @@ All bindings:
   ;; Added for psgml:
   (make-local-variable 'indent-line-function)
   (setq indent-line-function 'sgml-indent-line)
-  (make-local-variable 'mode-line-format)
-  (if (featurep 'xemacs)
-      ;; Modify mode-line-format with susbt (sugested by wing)
-      ;; Apart from requiring CL at runtime, this doesn't work in Emacs
-      ;; 21.  It's the sort of thing which-func is supposed to do...
-      (setq mode-line-format
-	    (subst '("" mode-name sgml-active-dtd-indicator) 'mode-name
-		   mode-line-format))
-    (set (make-local-variable 'which-func-format) 'sgml-active-dtd-indicator))
   (make-local-variable 'sgml-default-dtd-file)
   (when (setq sgml-default-dtd-file (sgml-default-dtd-file))
     (unless (file-exists-p sgml-default-dtd-file)
@@ -1237,9 +946,11 @@ All bindings:
     (make-local-hook 'activate-menubar-hook))
   (add-hook 'activate-menubar-hook 'sgml-update-all-options-menus
 	    nil 'local)
+  (add-hook 'which-func-functions 'sgml-current-element-name nil t)
   (run-hooks 'text-mode-hook 'sgml-mode-hook)
   (easy-menu-add sgml-main-menu)
   (sgml-build-custom-menus))
+
 
 ;; It would be nice to generalize the `auto-mode-interpreter-regexp'
 ;; machinery so that we could select xml-mode on the basis of the

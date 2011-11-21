@@ -1,6 +1,6 @@
 ;;;; psgml-info.el
 ;;; Last edited: 2000-11-09 19:23:50 lenst
-;;; $Id: psgml-info.el,v 2.16 2005/02/27 17:12:05 lenst Exp $
+;;; $Id: psgml-info.el,v 2.18 2005/05/19 19:06:47 lenst Exp $
 
 ;; Copyright (C) 1994, 1995 Lennart Staflin
 
@@ -149,7 +149,11 @@
        (cons (sgml-eltype-name eltype)
 	     (mapcar (function sgml-attdecl-name)
 		     (sgml-eltype-attlist eltype))))))
-   "Elements" "Element" "Attribute"))
+   "Elements" "Element" "Attribute"
+   nil nil
+   'sgml-list-attributes
+   'sgml-describe-element-type))
+
 
 
 ;;;; List attributes
@@ -168,7 +172,8 @@
 				       (sgml-eltype-name eltype)
 				       attributes))))))
     (sgml-display-table attributes
-			"Attributes" "Attribute" "Element")))
+			"Attributes" "Attribute" "Element"
+                        nil nil 'sgml-list-elements)))
 
 
 
@@ -209,7 +214,10 @@
 	     (mapcar (function sgml-eltype-name)
 		     (sgml-eltype-refrenced-elements eltype))))))
    "Elements referenced by elements"
-   "Element" "Content"))
+   "Element" "Content"
+   nil nil
+   'sgml-list-occur-in-elements
+   'sgml-describe-element-type   ))
 
 (defun sgml-list-occur-in-elements ()
   "List all element types and where it can occur."
@@ -225,45 +233,67 @@
 						cross))))))
     (sgml-display-table
      cross
-     "Cross referenced element types" "Element" "Can occur in")))
+     "Cross referenced element types" "Element" "Can occur in"
+     nil nil
+   'sgml-list-content-elements
+   'sgml-describe-element-type )))
 
 
 ;;;; Display table
 
 (defun sgml-display-table (table title col-title1 col-title2
-				 &optional width nosort)
+                           &optional width nosort dual-table
+                           col1-describe)
   (or width
       (setq width sgml-attr-col))
-  (let ((buf (get-buffer-create (format "*%s*" title))))
-    (message "Preparing display...")
-    (set-buffer buf)
-    (erase-buffer)
-    (insert col-title1)
-    (indent-to width)
-    (insert col-title2 "\n")
-    (insert-char ?= (length col-title1))
-    (indent-to width)
-    (insert-char ?= (length col-title2))
-    (insert "\n")
-    (unless nosort
-      (setq table (sort table (function (lambda (a b)
-					  (string< (car a) (car b)))))))
-    (loop for e in table do
-	  (insert (format "%s " (car e)))
-	  (loop for name in (if nosort
-				(cdr e)
-			      (sort (cdr e) (function string-lessp)))
-		do
-		(when (> (+ (length name) (current-column))
-			 fill-column)
-		  (insert "\n"))
-		(when (< (current-column) sgml-attr-col)
-		  (indent-to width))
-		(insert  name " "))
-	  (insert "\n"))
-    (goto-char (point-min))
-    (display-buffer buf)
-    (message nil)))
+  (with-output-to-temp-buffer "*Help*"
+    (let ((cb  (current-buffer)))
+      (message "Preparing display...")
+      (set-buffer standard-output)
+      (insert col-title1)
+      (indent-to width)
+      (if dual-table
+          (insert-text-button col-title2
+                              'action (lambda (button)
+                                        (let ((func (button-get button 'dual-table)))
+                                          (with-current-buffer (button-get button 'buffer)
+                                            (funcall func))))
+                              'buffer cb
+                              'dual-table dual-table)
+          (insert col-title2))
+      (insert "\n")
+      (insert-char ?= (length col-title1))
+      (indent-to width)
+      (insert-char ?= (length col-title2))
+      (insert "\n")
+      (unless nosort
+        (setq table (sort table (function (lambda (a b)
+                                  (string< (car a) (car b)))))))
+      (dolist (e table)
+        (let ((name (format "%s" (car e))))
+          (if col1-describe
+              (insert-button name
+                             'action (lambda (button)
+                                       (let ((name (button-get button 'name))
+                                             (func (button-get button 'func)))
+                                         (with-current-buffer
+                                             (button-get button 'buffer)
+                                           (funcall func name))))
+                             'buffer cb 'func col1-describe 'name name
+                             'follow-link t)
+            (insert name)))
+        (insert " ")
+        (dolist (name (if nosort (cdr e)
+                        (sort (cdr e) (function string-lessp))))
+          (when (> (+ (length name) (current-column))
+                   fill-column)
+            (insert "\n"))
+          (when (< (current-column) sgml-attr-col)
+            (indent-to width))
+          (insert  name " "))
+        (insert "\n"))
+
+      (message nil))))
 
 
 ;;;; Describe entity
@@ -333,6 +363,34 @@
         (princ name)
 	(incf col (length name))))
 
+(define-button-type 'sgml-eltype
+  'action (lambda (button)
+            (let ((name (button-get button 'name)))
+              (with-current-buffer (button-get button 'buffer)
+                (sgml-describe-element-type name)))))
+
+(defun sgml-print-eltypes (eltypes &optional first sep)
+  (let ((orig-buffer (current-buffer)))
+    (with-current-buffer standard-output
+      (setq sep (or sep " "))
+      (loop with col = 0
+            for et in eltypes
+            for name = (sgml-eltype-name et)
+            for this-sep = (if first (prog1 first (setq first nil)) sep)
+            do
+            (insert this-sep)
+            (incf col (length this-sep))
+            (when (and (> col 0) (> (+ col (length name)) fill-column))
+              (insert "\n ")
+              (setq col 1))
+            (if (eq et sgml-pcdata-token)
+                (insert name)
+                (insert-text-button name :type 'sgml-eltype
+                                    'name name 'buffer orig-buffer
+                                    'follow-link t))
+            (incf col (length name))))))
+
+
 (defun sgml-describe-element-type (et-name)
   "Describe the properties of an element type as declared in the current DTD."
   (interactive
@@ -358,7 +416,7 @@
 
   (sgml-need-dtd)
   (let ((et (sgml-lookup-eltype et-name)))
-    (with-output-to-temp-buffer "*Help*"
+    (with-output-to-temp-buffer (help-buffer)
       (princ (format "ELEMENT: %s\n\n" (sgml-eltype-name et)))
       (princ (format " Start-tag is %s.\n End-tag is %s.\n"
 		     (if (sgml-eltype-stag-optional et)
@@ -397,18 +455,17 @@
 	    (t
 	     (princ (if (sgml-eltype-mixed et) "mixed\n\n"
                       "element\n\n"))
-	     (sgml-princ-names
-	      (mapcar #'symbol-name (sgml-eltype-refrenced-elements et)))))
+	     (sgml-print-eltypes (sgml-eltype-refrenced-elements et))))
       (let ((incl (sgml-eltype-includes et))
             (excl (sgml-eltype-excludes et)))
         (when (or incl excl)
           (princ "\n\nEXCEPTIONS:"))
         (when incl
           (princ "\n + ")
-          (sgml-princ-names (mapcar #'symbol-name incl)))
+          (sgml-print-eltypes incl))
         (when excl
           (princ "\n - ")
-          (sgml-princ-names (mapcar #'symbol-name excl))))
+          (sgml-print-eltypes excl)))
       ;; ----
       (princ "\n\nOCCURS IN:\n\n")
       (let ((occurs-in ()))
@@ -417,11 +474,16 @@
 		     (when (memq et (sgml-eltype-refrenced-elements cand))
 		       (push cand occurs-in))))
 	 (sgml-pstate-dtd sgml-buffer-parse-state))
-        (sgml-princ-names (mapcar 'sgml-eltype-name
-                                  (sort occurs-in (function string-lessp))))))))
+        (sgml-print-eltypes (sort occurs-in (function string-lessp)))))))
 
 
 ;;;; Print general info about the DTD.
+
+
+(defun sgml-insert-button (label &rest properties)
+  (with-current-buffer standard-output
+    (apply #'insert-text-button label properties)))
+
 
 (defun sgml-describe-dtd ()
   "Display information about the current DTD."
@@ -440,20 +502,25 @@
     (sgml-map-entities (function (lambda (e) (incf parameters)))
 		       (sgml-dtd-parameters sgml-dtd-info))
 
-    (with-output-to-temp-buffer "*Help*"
+    (with-output-to-temp-buffer (help-buffer)
       (princ (format fmt "Doctype:" (sgml-dtd-doctype sgml-dtd-info)))
       (when (sgml-dtd-merged sgml-dtd-info)
 	(princ (format fmt "Compiled DTD:"
 		       (car (sgml-dtd-merged sgml-dtd-info)))))
-      (princ (format fmt "Element types:" (format "%d" elements)))
+      (sgml-insert-button
+       (format fmt "Element types:" (format "%d" elements))
+       'action (lambda (button)
+                 (with-current-buffer (button-get button 'buffer)
+                   (sgml-list-elements)))
+       'buffer (current-buffer) 'follow-link t)
       (princ (format fmt "Entities:" (format "%d" entities)))
       (princ (format fmt "Parameter entities:" (format "%d" parameters)))
 
       (setq hdr "Files used:")
-      (loop for x in (sgml-dtd-dependencies sgml-dtd-info)
-	    if (stringp x)
-	    do (princ (format fmt hdr x))
-	    (setq hdr ""))
+      (dolist (x (sgml-dtd-dependencies sgml-dtd-info))
+        (when (stringp x)
+          (princ (format fmt hdr x))
+          (setq hdr "")))
 
       (setq hdr "Undef parameters:")
       (sgml-map-entities
@@ -461,7 +528,8 @@
 		   (when (sgml-entity-marked-undefined-p entity)
 		     (princ (format fmt hdr (sgml-entity-name entity)))
 		     (setq hdr ""))))
-       (sgml-dtd-parameters sgml-dtd-info)))))
+       (sgml-dtd-parameters sgml-dtd-info))
+      (print-help-return-message))))
 
 
 (defalias 'sgml-general-dtd-info 'sgml-describe-dtd)

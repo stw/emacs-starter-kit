@@ -22,7 +22,7 @@
       '((sbcl ("/usr/local/bin/sbcl"))
      (clojure ("/Users/steve/bin/clojure") :init swank-clojure-init))) 
 (add-to-list 'auto-mode-alist '("\\.lisp" . slime-mode)) 
-
+(add-to-list 'auto-mode-alist '("\\.lisp" . lisp-mode))
 ;; coffee-mode
 (add-to-list 'load-path "~/.emacs.d/coffee-mode")
 (require 'coffee-mode)
@@ -102,15 +102,13 @@
         (require 'php-align)
         (php-align-setup)))
 
-    (defun save-mmm-c-locals ()
-      (with-temp-buffer
-        (php-mode)
-        (dolist (v (buffer-local-variables))
-          (when (string-match "\\`c-" (symbol-name (car v)))
-            (add-to-list 'mmm-save-local-variables `(,(car v) nil ,mmm-c-derived-modes))))))
-    (save-mmm-c-locals)
-
-
+(defun save-mmm-c-locals ()
+  (with-temp-buffer
+    (php-mode)
+    (dolist (v (buffer-local-variables))
+      (when (string-match "\\`c-" (symbol-name (car v)))
+        (add-to-list 'mmm-save-local-variables `(,(car v) nil ,mmm-c-derived-modes))))))
+(save-mmm-c-locals)
 
 
 (autoload #'espresso-mode "espresso" "Start espresso-mode" t)
@@ -239,4 +237,42 @@
 ;; textmate 
 (add-to-list 'load-path "~/.emacs.d/textmate")
 (require 'textmate)
-(textmate-mode)
+(textmate-mode) 
+
+;; evernote mode 
+;;(setq evernote-ruby-command "/Users/steve/.rvm/rubies/ruby-1.9.2-p290/bin/ruby")
+;;(require 'evernote-mode)
+;;(setq evernote-username "steveaz98") ; optional: you can use this username as default.
+;;(setq evernote-enml-formatter-command '("w3m" "-dump" "-I" "UTF8" "-O" "UTF8")) ; option
+;;(global-set-key "\C-c ec" 'evernote-create-note)
+;;(global-set-key "\C-c eo" 'evernote-open-note)
+;;(global-set-key "\C-c es" 'evernote-search-notes)
+;;(global-set-key "\C-c eS" 'evernote-do-saved-search)
+;;(global-set-key "\C-c ew" 'evernote-write-note)
+;;(global-set-key "\C-c ep" 'evernote-post-region)
+;;(global-set-key "\C-c eb" 'evernote-browser)
+
+(global-set-key (kbd "C-c d") (kbd "M-0 C-k"))
+
+(autoload 'octave-mode "octave-mod" nil t)
+          (setq auto-mode-alist
+                (cons '("\\.m$" . octave-mode) auto-mode-alist))
+
+(add-hook 'octave-mode-hook
+                    (lambda ()
+                      (abbrev-mode 1)
+                      (auto-fill-mode 1)
+                      (if (eq window-system 'x)
+                          (font-lock-mode 1))))
+
+(defvar hexcolour-keywords
+  '(("#[abcdef[:digit:]]\\{6\\}"
+     (0 (put-text-property
+         (match-beginning 0)
+         (match-end 0)
+         'face (list :background 
+                     (match-string-no-properties 0)))))))
+(defun hexcolour-add-to-font-lock ()
+  (font-lock-add-keywords nil hexcolour-keywords))
+
+(add-hook 'css-mode-hook 'hexcolour-add-to-font-lock)

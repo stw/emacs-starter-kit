@@ -1,5 +1,5 @@
 ;;;; psgml-parse.el --- Parser for SGML-editing mode with parsing support
-;; $Id: psgml-parse.el,v 2.99 2005/02/27 17:13:07 lenst Exp $
+;; $Id: psgml-parse.el,v 2.105 2008/06/21 16:13:51 lenst Exp $
 
 ;; Copyright (C) 1994, 1995, 1996, 1997, 1998 Lennart Staflin
 
@@ -302,9 +302,10 @@ Applicable to XML.")
     (modify-syntax-entry i " " sgml-parser-syntax)
     (setq i (1+ i))))
 
+;;http://list-archive.xemacs.org/xemacs-beta/200011/msg00117.html
 (mapconcat (function (lambda (c)
 	     (modify-syntax-entry c "w" sgml-parser-syntax)))
-	   "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrtsuvwxyz" "")
+	   ":ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrtsuvwxyz" "")
 (mapconcat (function (lambda (c)
 		       (modify-syntax-entry c "_" sgml-parser-syntax)))
 	   "-.0123456789" "")
@@ -330,28 +331,30 @@ Applicable to XML.")
 ;;(progn (set-syntax-table xml-parser-syntax) (describe-syntax))
 
 (defmacro sgml-with-parser-syntax (&rest body)
-  (` (let ((normal-syntax-table (syntax-table))
-           (cb (current-buffer)))
-       (set-syntax-table (if sgml-xml-p xml-parser-syntax sgml-parser-syntax))
-       (unwind-protect
-	   (progn (,@ body))
-         (setq sgml-last-buffer (current-buffer))
-         (set-buffer cb)
-	 (set-syntax-table normal-syntax-table)))))
+  `(let ((normal-syntax-table (syntax-table))
+         (cb (current-buffer)))
+     (set-syntax-table (if sgml-xml-p xml-parser-syntax sgml-parser-syntax))
+     (unwind-protect
+         (progn ,@body)
+       (setq sgml-last-buffer (current-buffer))
+       (set-buffer cb)
+       (set-syntax-table normal-syntax-table))))
 
 (defmacro sgml-with-parser-syntax-ro (&rest body)
   ;; Should only be used for parsing ....
-  (` (let ((normal-syntax-table (syntax-table))
-           (cb (current-buffer))
-           (buffer-modified (buffer-modified-p)))
-       (set-syntax-table (if sgml-xml-p xml-parser-syntax sgml-parser-syntax))
-       (unwind-protect
-	   (progn (,@ body))
-         (setq sgml-last-buffer (current-buffer))
-         (set-buffer cb)
-	 (set-syntax-table normal-syntax-table)
-         (sgml-restore-buffer-modified-p buffer-modified)
-         (sgml-debug "Restoring buffer mod: %s" buffer-modified)))))
+  `(let ((normal-syntax-table (syntax-table))
+         (cb (current-buffer))
+         (buffer-modified (buffer-modified-p)))
+     (set-syntax-table (if sgml-xml-p xml-parser-syntax sgml-parser-syntax))
+     (unwind-protect
+         (progn ,@body)
+       (setq sgml-last-buffer (current-buffer))
+       (set-buffer cb)
+       (set-syntax-table normal-syntax-table)
+       (sgml-restore-buffer-modified-p buffer-modified)
+       (sgml-debug "Restoring buffer mod: %s" buffer-modified))))
+
+(eval-when-compile (defvar mc-flag))
 
 (defun sgml-set-buffer-multibyte (flag)
   (cond ((featurep 'xemacs)
@@ -361,6 +364,7 @@ Applicable to XML.")
           (if (eq flag 'default)
               default-enable-multibyte-characters
             flag)))
+	;; I doubt the current code works in old Mule anyway.  -- fx
 	((boundp 'MULE)
          (set 'mc-flag flag))
         (t
@@ -429,21 +433,21 @@ Applicable to XML.")
 ;;move: (token . node)
 
 (defmacro sgml-make-move (token node)
-  (` (cons (, token) (, node))))
+  `(cons ,token ,node))
 
 (defmacro sgml-move-token (x)
-  (` (car (, x))))
+  `(car ,x))
 
 (defmacro sgml-move-dest (x)
-  (` (cdr (, x))))
+  `(cdr ,x))
 
 ;; set of moves: list of moves
 
 (defmacro sgml-add-move-to-set (token node set)
-  (`(cons (cons (, token) (, node)) (, set))))
+  `(cons (cons ,token ,node) ,set))
 
 (defmacro sgml-moves-lookup (token set)
-  (` (assq (, token) (, set))))
+  `(assq ,token ,set))
 
 ;; normal-state: ('normal-state opts . reqs)
 
@@ -451,16 +455,16 @@ Applicable to XML.")
   (cons 'normal-state (cons nil nil)))
 
 (defmacro sgml-normal-state-p (s)
-  (` (eq (car (, s)) 'normal-state)))
+  `(eq (car ,s) 'normal-state))
 
 (defmacro sgml-state-opts (s)
-  (` (cadr (, s))))
+  `(cadr ,s))
 
 (defmacro sgml-state-reqs (s)
-  (` (cddr (, s))))
+  `(cddr ,s))
 
 (defmacro sgml-state-final-p (s)
-  (`(null (sgml-state-reqs (, s)))))
+  `(null (sgml-state-reqs ,s)))
 
 ;; adding moves
 ;; *** Should these functions check for ambiguity?
@@ -508,10 +512,10 @@ Applicable to XML.")
   (cons next dfas))
 
 (defmacro sgml-and-node-next (n)
-  (` (car (, n))))
+  `(car ,n))
 
 (defmacro sgml-and-node-dfas (n)
-  (` (cdr (, n))))
+  `(cdr ,n))
 
 
 ;;; Using states
@@ -904,8 +908,8 @@ If ATTSPEC is nil, nil is returned."
   (cons
    'progn
    (loop for n in names collect
-	 (`(defmacro (, (intern (format "sgml-eltype-%s" n))) (et)
-	     (list 'get et ''(, n)))))))
+	 `(defmacro ,(intern (format "sgml-eltype-%s" n)) (et)
+	     (list 'get et '',n)))))
 
 (sgml-prop-fields
  ;;flags			; optional tags and mixed
@@ -920,7 +924,7 @@ If ATTSPEC is nil, nil is returned."
  )
 
 (defmacro sgml-eltype-flags (et)
-  (` (symbol-value (, et))))
+  `(symbol-value ,et))
 
 (defun sgml-eltype-model (et)
   (if (fboundp et)
@@ -967,7 +971,7 @@ If ATTSPEC is nil, nil is returned."
   "Get application data from element type ET with name PROP.
 PROP should be a symbol, reserved names are: flags, model, attlist,
 includes, excludes, conref-regexp, mixed, stag-optional, etag-optional."
-  (` (get (, et) (, prop))))
+  `(get ,et ,prop))
 
 (defun sgml-eltype-all-miscdata (et)
   (loop for p on (symbol-plist et) by (function cddr)
@@ -1060,7 +1064,7 @@ a default for the element type name."
 ;;; Wing addition
 (defmacro sgml-char-int (ch)
   (if (fboundp 'char-int)
-      (` (char-int (, ch)))
+      `(char-int ,ch)
     ch))
 
 (defsubst sgml-read-octet ()
@@ -1435,51 +1439,50 @@ list -- any of the contextual constraints in the list."
 	   (setq context '(t)))
 	  ((not (listp context))
 	   (setq context (list context))))
-    (`(if (and				; This and checks that characters
+    `(if (and                        ; This and checks that characters
 					; of the delimiter
-	   (,@(loop for i from 0 below (length ds) collect
-		    (` (eq (, (aref ds i))
-			   (sgml-following-char (, (+ i offset)))))))
-	   (or
-	    (,@(loop
-		for c in context collect ; context check
-		(cond
-		 ((eq c 'nmstart)	; name start character
-		  (`(sgml-startnm-char
-		     (or (sgml-following-char (, (length ds))) 0))))
-		 ((eq c 'stagc)
-		  (`(and sgml-current-shorttag
-			 (sgml-is-delim "TAGC" nil nil (, (length ds))))))
-		 ((eq c 'digit)
-		  (`(memq (sgml-following-char (, (length ds)))
-			  '(?0 ?1 ?2 ?3 ?4 ?5 ?6 ?7 ?8 ?9))))
-		 ((stringp c)
-		  (`(sgml-is-delim (, c) nil nil (, (length ds)))))
-		 ((eq c t))
-		 (t (error "Context type: %s" c))))
-	       )))
+          ,@(loop for i from 0 below (length ds) collect
+                  `(eq ,(aref ds i)
+                       (sgml-following-char ,(+ i offset))))
+          (or
+           ,@(loop
+              for c in context collect  ; context check
+              (cond
+               ((eq c 'nmstart)         ; name start character
+                `(sgml-startnm-char
+                  (or (sgml-following-char ,(length ds)) 0)))
+               ((eq c 'stagc)
+                `(and sgml-current-shorttag
+                      (sgml-is-delim "TAGC" nil nil ,(length ds))))
+               ((eq c 'digit)
+                `(memq (sgml-following-char ,(length ds))
+                       '(?0 ?1 ?2 ?3 ?4 ?5 ?6 ?7 ?8 ?9)))
+               ((stringp c)
+                `(sgml-is-delim ,c nil nil ,(length ds)))
+               ((eq c t))
+               (t (error "Context type: %s" c))))))
 	  
-	  (progn			; Do operations if delimiter found
-	    (,@ (if move (`((forward-char (, (length ds)))))))
-	    (,@ (if (not (eq move 'check))
-		    '(t))))
-	(,@ (if (eq move 'check)
-		(`((sgml-delimiter-parse-error (, delim))))))))))
+         (progn                     ; Do operations if delimiter found
+           ,@(if move `((forward-char ,(length ds))))
+           ,@(if (not (eq move 'check))
+                 '(t)))
+       ,@(if (eq move 'check)
+             `((sgml-delimiter-parse-error ,delim))))))
 
 (defmacro sgml-following-char (n)
   (cond ((zerop n)  '(following-char))
 	((= n 1)    '(char-after (1+ (point))))
-	(t          (` (char-after (+ (, n) (point)))))))
+	(t          `(char-after (+ ,n (point))))))
 
 (defun sgml-delimiter-parse-error (delim)
   (sgml-parse-error "Delimiter %s (%s) expected"
 		    delim (sgml-get-delim-string delim)))
 
 (defmacro sgml-parse-delim (delim &optional context)
-  (`(sgml-is-delim (, delim) (, context) move)))
+  `(sgml-is-delim ,delim ,context move))
 
 (defmacro sgml-check-delim (delim &optional context)
-  (`(sgml-is-delim (, delim) (, context) check)))
+  `(sgml-is-delim ,delim ,context check))
 
 (defmacro sgml-skip-upto (delim)
   "Skip until the delimiter or first char of one of the delimiters.
@@ -1503,8 +1506,8 @@ in any of them."
     (let ((ds (sgml-get-delim-string (upcase (format "%s" delim)))))
       (if (= 1 (length ds))
 	  (list 'skip-chars-forward (concat "^" ds))
-	(`(and (search-forward (, ds) nil t)
-	       (backward-char (, (length ds))))))))))
+	`(and (search-forward ,ds nil t)
+	       (backward-char ,(length ds))))))))
 
 
 ;;(macroexpand '(sgml-is-delim mdo))
@@ -1521,22 +1524,22 @@ in any of them."
 ;;;                aproporiate value.
 
 (defmacro sgml-parse-char (char)
-  (` (cond ((eq (, char) (following-char))
+  `(cond ((eq ,char (following-char))
 	    (forward-char 1)
-	    t))))
+	    t)))
 
 (defmacro sgml-parse-chars (char1 char2 &optional char3)
   "Parse two or three chars; return nil if can't."
   (if (null char3)
-      (` (cond ((and (eq (, char1) (following-char))
-		 (eq (, char2) (char-after (1+ (point)))))
-	    (forward-char 2)
-	    t)))
-    (` (cond ((and (eq (, char1) (following-char))
-		 (eq (, char2) (char-after (1+ (point))))
-		 (eq (, char3) (char-after (1+ (1+ (point))))))
+      `(cond ((and (eq ,char1 (following-char))
+                   (eq ,char2 (char-after (1+ (point)))))
+              (forward-char 2)
+              t))
+    `(cond ((and (eq ,char1 (following-char))
+		 (eq ,char2 (char-after (1+ (point))))
+		 (eq ,char3 (char-after (1+ (1+ (point))))))
 	    (forward-char 3)
-	    t)))))
+	    t))))
 
 (defun sgml-check-char (char)
   (cond ((not (sgml-parse-char char))
@@ -1547,7 +1550,7 @@ in any of them."
       (sgml-parse-char ?\r)))
 
 (defmacro sgml-startnm-char (c)
-  (` (eq ?w (char-syntax (, c)))))
+  `(eq ?w (char-syntax ,c)))
 
 (defsubst sgml-startnm-char-next ()
   (and (not (eobp))
@@ -1694,11 +1697,11 @@ in any of them."
 (define-compiler-macro sgml-parse-name (&whole form &optional entity-name)
   (cond
    ((memq entity-name '(nil t))
-    (` (if (sgml-startnm-char-next)
-	   ((, (if entity-name 'sgml-entity-case 'sgml-general-case))
+    `(if (sgml-startnm-char-next)
+	   (,(if entity-name 'sgml-entity-case 'sgml-general-case)
 	    (buffer-substring-no-properties (point)
 					    (progn (skip-syntax-forward "w_")
-						   (point)))))))
+						   (point))))))
    (t
     form)))
 
@@ -1828,8 +1831,8 @@ Return true if not at the end of the buffer."
 With optional NAME, RNI must be followed by NAME."
   (cond
    (name
-    (` (if (sgml-parse-delim "RNI")
-	   (sgml-check-token (, name)))))
+    `(if (sgml-parse-delim "RNI")
+	   (sgml-check-token ,name)))
    (t '(sgml-parse-delim "RNI"))))
 
 (defun sgml-check-token (name)
@@ -2053,11 +2056,13 @@ representation of the catalog."
     (apply (function sgml-log-message) args)))
 
 
-(defun sgml-catalog-lookup (files pubid type name)
-  "Look up the public identifier/entity name in catalogs.
-The result is a file name or nil.  FILES is a list of catalogs to use.
-PUBID is the public identifier \(if any). TYPE is the entity type and
-NAME is the entity name."
+(defun sgml-catalog-lookup (files pubid sysid type name initial-override)
+  "Look up the an entity in the catalogs.
+The entity is identified by a public identifier PUBID, system
+identifier SYSID and entity TYPE and NAME. If INITIAL-OVERRIDE is
+true, the system identifier will be used unless the catalog specifies
+otherwise. The result is a file name or nil. FILES is a list of
+catalogs to use."
   (cond ((eq type 'param)
 	 (setq name (format "%%%s" name)
 	       type 'entity))
@@ -2068,6 +2073,7 @@ NAME is the entity name."
 	(file nil))
     (while (and remaining (null file))
       (let ((additional nil)		; Extra catalogs to search
+            (override initial-override)
 	    (cat (sgml-cache-catalog (car remaining) 'sgml-catalog-assoc
 				     (function sgml-parse-catalog-buffer)
 				     (sgml-main-directory))))
@@ -2075,28 +2081,31 @@ NAME is the entity name."
 			   (expand-file-name (car remaining)
 					     (sgml-main-directory))
 			   (if (null cat) "empty/non existent" "exists"))
+        (when sysid                     ; SYSTEM has first call
+          (loop for (key cname cfile) in cat while (not file) do
+		(when (and (eq 'system key) (string= sysid cname))
+		  (sgml-trace-lookup "  >> %s [by system]" cfile)
+                  (setq file cfile))))
 	(when pubid
 	  ;; Giv PUBLIC entries priority over ENTITY and DOCTYPE
-	  (loop for (key cname cfile) in cat
-		while (not file) do
-		(when (and (eq 'public key)
-			   (string= pubid cname))
+	  (loop for (key cname cfile) in cat while (not file) do
+		(when (and (or override (not sysid))
+                           (eq 'public key) (string= pubid cname))
 		  (when (file-readable-p cfile) (setq file cfile))
 		  (sgml-trace-lookup "  >> %s [by pubid]%s"
-				     cfile (if file "" " !unreadable")))))
-	(loop for (key cname cfile) in cat
-	      while (not file) do
-	      (when (eq 'catalog key)
-		(push cfile additional))
-	      (when (and (eq type key)
-			 (or (null cname)
-			     (string= name cname)))
-		(when (file-readable-p cfile) (setq file cfile))
-		(sgml-trace-lookup "  >> %s [by %s %s]%s"
-				   cfile key cname
-				   (if file "" " !unreadable"))))
-	(setq remaining
-	      (nconc (nreverse additional) (cdr remaining)))))
+				     cfile (if file "" " !unreadable")))
+                (when (eq key 'override) (setq override cname))))
+        (loop for (key cname cfile) in cat while (not file) do
+              (when (eq 'catalog key) (push cfile additional))
+              (when (and (or override (not sysid))
+                         (eq type key)
+                         (or (null cname) (string= name cname)))
+                (when (file-readable-p cfile) (setq file cfile))
+                (sgml-trace-lookup "  >> %s [by %s %s]%s" cfile key cname
+                                   (if file "" " !unreadable")))
+              (when (eq key 'override) (setq override cname)))
+        (setq remaining
+              (nconc (nreverse additional) (cdr remaining)))))
     file))
 
 
@@ -2125,37 +2134,26 @@ NAME is the entity name."
 	       (not (file-directory-p cand))
 	       cand))))
 
+
 (defun sgml-external-file (extid &optional type name)
   "Return file name for entity with external identifier EXTID.
 Optional argument TYPE should be the type of entity and NAME should be
 the entity name."
-  ;; extid is (pubid . sysid)
-  (let ((pubid (sgml-extid-pubid extid)))
+  (let ((pubid (sgml-extid-pubid extid))
+        (sysid (sgml-extid-sysid extid))
+        (override (not sgml-system-identifiers-are-preferred)))
     (when pubid (setq pubid (sgml-canonize-pubid pubid)))
     (sgml-trace-lookup "Start looking for %s entity %s public %s system %s"
-		       (or type "-")
-		       (or name "?")
-		       pubid
-		       (sgml-extid-sysid extid))
-    (or (if (and sgml-system-identifiers-are-preferred
-		 (sgml-extid-sysid extid))
-	    (or (sgml-lookup-sysid-as-file extid)
-		(sgml-path-lookup  ;Try the path also, but only using sysid
-		 (sgml-make-extid nil (sgml-extid-sysid extid))
-		 nil nil)))
-	(sgml-catalog-lookup sgml-current-localcat pubid type name)
-	(sgml-catalog-lookup sgml-catalog-files pubid type name)
-	(if (not sgml-system-identifiers-are-preferred)
-	    (sgml-lookup-sysid-as-file extid))
+		       (or type "-") (or name "?") pubid sysid)
+    (or (sgml-catalog-lookup sgml-current-localcat
+                             pubid sysid type name override)
+        (sgml-catalog-lookup sgml-catalog-files
+                             pubid sysid type name override)
+        (and sysid
+             (file-readable-p (setq sysid (sgml-extid-expand sysid extid)))
+             sysid)
 	(sgml-path-lookup extid type name))))
 
-(defun sgml-lookup-sysid-as-file (extid)
-  (let ((sysid (sgml-extid-sysid extid)))
-    (and sysid
-	 (loop for pat in sgml-public-map
-	       never (string-match "%[Ss]" pat))
-	 (file-readable-p (setq sysid (sgml-extid-expand sysid extid)))
-	 sysid)))
 
 (defun sgml-insert-external-entity (extid &optional type name)
   "Insert the contents of an external entity at point.
@@ -2196,7 +2194,9 @@ Returns nil if entity is not found."
                                     ("entity" . name)   ("linktype" . name)
                                     ("doctype" . name)  ("sgmldecl" . noname)
                                     ("document" . noname)
-                                    ("catalog"  . noname))))
+                                    ("catalog"  . noname)
+                                    ("system" . two-files)
+                                    ("override" . flag))))
      when (not (null class))
      collect
      (let* ((name
@@ -2206,9 +2206,13 @@ Returns nil if entity is not found."
                    ((string= type "doctype")
                     (sgml-general-case (sgml-check-cat-literal)))
                    ((eq class 'name)
-                    (sgml-entity-case (sgml-check-cat-literal)))))
-            (file
-             (expand-file-name (sgml-check-cat-literal))))
+                    (sgml-entity-case (sgml-check-cat-literal)))
+                   ((eq class 'two-files)
+                    (sgml-check-cat-literal))
+                   ((eq class 'flag)
+                    (equal "yes" (downcase (sgml-check-cat-literal))))))
+            (file (or (eq class 'flag)
+                      (expand-file-name (sgml-check-cat-literal)))))
        (list (intern type) name file)))))
 
 
@@ -2734,11 +2738,11 @@ overrides the entity type in entity look up."
   (let ((macs nil))
     (while fields
       (push
-       (` (defmacro (, (intern (format "%s-%s" dest (car fields)))) (element)
-	    (, (format "Return %s field of ELEMENT." (car fields)))
-	    (list
-	     '(, (intern (format "%s-%s" orig (car fields))))
-	     element)))
+       `(defmacro ,(intern (format "%s-%s" dest (car fields))) (element)
+          ,(format "Return %s field of ELEMENT." (car fields))
+          (list
+           ',(intern (format "%s-%s" orig (car fields)))
+           element))
        macs)
       (setq fields (cdr fields)))
     (cons 'progn macs)))
@@ -2776,7 +2780,7 @@ overrides the entity type in entity look up."
 
 (defmacro sgml-element-stag-optional (element)
   "True if start-tag of ELEMENT is omissible."
-  (`(sgml-eltype-stag-optional (sgml-tree-eltype (, element)))))
+  `(sgml-eltype-stag-optional (sgml-tree-eltype ,element)))
 
 (defsubst sgml-element-etag-optional (element)
   "True if end-tag of ELEMENT is omissible."
@@ -2833,6 +2837,8 @@ overrides the entity type in entity look up."
 
 ;;;; Display and Mode-line
 
+(eval-when-compile (defvar which-func-mode))
+
 (defun sgml-update-display ()
   (when (not (eq this-command 'keyboard-quit))
     ;; Don't let point be inside an invisible region
@@ -2846,45 +2852,29 @@ overrides the entity type in entity look up."
 	(goto-char (or (next-single-property-change (point) 'invisible)
 		       (point-max)))))
     (when (and (not executing-macro)
-	       (or sgml-live-element-indicator
+	       (or (and (boundp 'which-function-mode)
+                        which-function-mode )
 		   sgml-set-face)
 	       (not (null sgml-buffer-parse-state))
 	       (sit-for 0))
       (let ((deactivate-mark nil))
 	(sgml-need-dtd)
+        ;; Find current element
+        (setq sgml-current-element-name
+              (if (and (memq this-command sgml-users-of-last-element)
+                       sgml-last-element)
+                  (sgml-element-gi sgml-last-element)))
 	(let ((eol-pos (save-excursion (end-of-line 1) (point))))
-	  (let ((quiet (< (- (point) (sgml-max-pos-in-tree sgml-top-tree))
-                          500)))
-	    (when (if quiet
-		      t
-		    (setq sgml-current-element-name "?")
-		    (sit-for 1))
-
-	      ;; Find current element
-	      (cond ((and (memq this-command sgml-users-of-last-element)
-			  sgml-last-element)
-		     (setq sgml-current-element-name
-			   (sgml-element-gi sgml-last-element)))
-		    (sgml-live-element-indicator
-		     (save-excursion
-		       (condition-case nil
-			   (sgml-parse-to
-			    (point) (function input-pending-p) quiet)
-			 (error
-			  (setq sgml-current-element-name "*error*")))
-		       (unless (input-pending-p)
-			 (setq sgml-current-element-name
-			       (sgml-element-gi sgml-current-tree))
-			 (force-mode-line-update)))))
-	      ;; Set face on current line
-	      (when (and sgml-set-face (not (input-pending-p)))
-		(save-excursion
-		  (condition-case nil
-		      (sgml-parse-to
-		       eol-pos (function input-pending-p) quiet)
-		    (error nil)))))))
+          ;; Set face on current line
+          (when (and sgml-set-face (not (input-pending-p)))
+            (save-excursion
+              (condition-case nil
+                  (sgml-parse-to
+                   eol-pos (function input-pending-p) t)
+                (error nil)))))
 	;; Set face in rest of buffer
 	(sgml-fontify-buffer 6)		;FIXME: make option for delay
+        ;; FIXME: use run-with-idle-timer ?
 	))))
 
 (defun sgml-fontify-buffer (delay)
@@ -2902,15 +2892,22 @@ overrides the entity type in entity look up."
 	 (message "Fontifying...done"))
      (error nil))))
 
-(defun sgml-set-active-dtd-indicator (name)
-  ;; At least when using the which-func machinery, don't show anything
-  ;; unless `sgml-live-element-indicator' is non-nil.
-  (set (make-local-variable 'which-func-mode) sgml-live-element-indicator)
-  (set (make-local-variable 'sgml-active-dtd-indicator)
-       (list (format " [%s" name)
-	     '(sgml-live-element-indicator ("/" sgml-current-element-name))
-	     "]"))
-  (force-mode-line-update))
+
+(defun sgml-current-element-name ()
+  ;; Return the name of the current element for which-function-mode
+  (or sgml-current-element-name 
+      (save-excursion
+        (condition-case nil
+            (progn
+              (sgml-parse-to
+               (point) (function input-pending-p) )
+              (if (input-pending-p)
+                  "?"
+                (setq sgml-current-element-name
+                      (sgml-element-gi sgml-current-tree))))
+          (error
+           (setq sgml-current-element-name "*error*"))))))
+
 
 ;;;; Parser state
 
@@ -2934,7 +2931,6 @@ overrides the entity type in entity look up."
   (make-local-hook 'after-change-functions)
   (add-hook 'before-change-functions 'sgml-note-change-at nil 'local)
   (add-hook 'after-change-functions 'sgml-set-face-after-change nil 'local)
-  (sgml-set-active-dtd-indicator (sgml-dtd-doctype dtd))
   (let ((top-type			; Fake element type for the top
 					; node of the parse tree
 	 (sgml-make-eltype "#DOC")	; was "Document (no element)"
@@ -3505,7 +3501,7 @@ Where PAIRS is a list of (delim . ename)."
 Also move point.  Return nil, either if no shortref or undefined."
 
   (macrolet
-      ((delim (x) (` (aref map (, (sgml-shortref-index x))))))
+      ((delim (x) `(aref map ,(sgml-shortref-index x))))
     (let ((i (if nobol 1 0)))
       (while (numberp i)
 	(setq i
@@ -4130,9 +4126,16 @@ pointing to start of short ref and point pointing to the end."
   (sgml-set-markup-type nil))
 
 (defvar sgml-parser-loop-hook nil)
+(defvar sgml-parse-in-loop nil
+  "Non-nil means the body of `sgml-parser-loop' is executing.
+Thus lower-level functions don't need to use `sgml-with-modification-state'.")
 (defun sgml-parser-loop (extra-cond)
   (let (tem
-	(sgml-signal-data-function (function sgml-pcdata-move)))
+	(sgml-signal-data-function (function sgml-pcdata-move))
+	;; Speed up significantly by effectively hoisting
+	;; `sgml-with-modification-state' out of the loop.
+	(sgml-parse-in-loop t))
+    (sgml-with-modification-state
     (while (and (eq sgml-current-tree sgml-top-tree)
 		(or (< (point) sgml-goal) sgml-current-eref)
 		(progn (setq sgml-markup-start (point)
@@ -4177,7 +4180,7 @@ pointing to start of short ref and point pointing to the end."
        ((and sgml-parser-loop-hook
              (run-hook-with-args-until-success 'sgml-parser-loop-hook)))
        (t
-	(sgml-do-pcdata))))))
+	(sgml-do-pcdata)))))))
 
 (defun sgml-handle-shortref (name)
   (sgml-set-markup-type 'shortref)

@@ -1,5 +1,5 @@
 ;;;; psgml-lucid.el --- Part of SGML-editing mode with parsing support
-;; $Id: psgml-lucid.el,v 2.7 2002/04/25 20:50:27 lenst Exp $
+;; $Id: psgml-lucid.el,v 2.8 2008/06/21 16:13:51 lenst Exp $
 
 ;; Copyright (C) 1994 Lennart Staflin
 
@@ -126,17 +126,17 @@ if the item is selected."
 		(loop for c in type collect
 		      (if (atom c)
 			  (vector (prin1-to-string c)
-				  (`(setq (, var) (, c)))
+				  `(setq ,var (, c))
 				  :style 'toggle
-				  :selected (`(eq (, var) '(, c))))
+				  :selected `(eq ,var ',c))
 			(vector (car c)
-				(`(setq (, var) '(,(cdr c))))
+				`(setq ,var ',(cdr c))
 				:style 'toggle
-				:selected (`(eq (, var) '(,(cdr c)))))))))
+				:selected `(eq ,var ',(cdr c)))))))
 	 (t
 	  (vector desc
-		  (`(sgml-do-set-option '(, var)))
-		  t)))))
+		  `(sgml-do-set-option ',var)
+                  t)))))
 
 
 (unless (or (not (boundp 'emacs-major-version))

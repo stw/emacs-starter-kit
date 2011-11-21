@@ -1,3 +1,103 @@
+2008-12-16  Lennart Staflin  <lenst@lysator.liu.se>
+
+	* psgml-dtd.el (sgml-parse-character-reference): string-to-int ->
+	string-to-number
+
+2008-06-21  Lennart Staflin  <lenst@lysator.liu.se>
+
+	* psgml-lucid.el (sgml-make-options-menu): change old style backquote
+
+	* psgml-parse.el (sgml-with-parser-syntax)
+	(sgml-with-parser-syntax-ro, sgml-make-move, sgml-move-token)
+	(sgml-move-dest, sgml-moves-lookup, sgml-normal-state-p)
+	(sgml-state-opts, sgml-state-reqs, sgml-and-node-next)
+	(sgml-and-node-dfas, sgml-eltype-flags, sgml-eltype-appdata)
+	(sgml-char-int, sgml-is-delim, sgml-following-char)
+	(sgml-parse-char, sgml-parse-chars, sgml-startnm-char)
+	(sgml-parse-name, sgml-parse-rni, sgml-alias-fields)
+	(sgml-deref-shortmap, sgml-state-final-p, sgml-prop-fields)
+	(sgml-parse-delim, sgml-check-delim, sgml-skip-upto)
+	(sgml-element-stag-optional): change old style backquote
+
+	* psgml-dtd.el (sgml-for-all-final-states, sgml-code-sequence):
+	change old style backquote
+
+	* psgml.el (sgml-markup)
+	(sgml-compute-insert-dtd-items)
+	(sgml-compute-custom-markup-items): change old style backquote
+
+2005-05-19 Dave Love
+
+	* psgml-parse.el (sgml-parse-in-loop, sgml-parser-loop):
+	* psgml-other.el (sgml-set-face-for):
+	Speed patch from debian?
+
+2005-05-19 Manoj Srivastava
+
+	* psgml.el (sgml-validate-command, sgml-xml-validate-command):
+	* psgml-parse.el:
+	* psgml-edit.el (sgml-change-element-name):
+	Patches from debian package
+
+2005-05-19  Lennart Staflin  <lenst@lysator.liu.se>
+
+	* psgml-edit.el (sgml-edit-external-entity): conditional use of
+	obsolete function process-kill-without-query
+
+	* psgml.el (sgml-live-element-indicator): obsolete var.
+	(sgml-main-menu): reduce menu depth, move insert dtd and insert
+	custom markup to top-level.
+	(sgml-mode): add the which-func-mode support
+
+	* psgml-parse.el (sgml-update-display): support which-fun-mode
+	with current element name as function name.
+	(sgml-set-active-dtd-indicator): removed
+	(sgml-current-element-name): new func for use in which-function-mode
+	(sgml-update-display): oops. remove unbound var quite, using t instead
+
+	* psgml-info.el (sgml-display-table): use
+	with-output-to-temp-buffer and dolist
+	(sgml-print-eltypes): new button for #PCDATA pseudo token.
+
+	* psgml-edit.el (sgml-right-stag-menu): Change "Misc" to "Action"
+	(sgml-attribute-buffer): use dolist instead of loop, as it is
+	standard in latest emacs, and factor out inserting comment with
+	the attribute type.
+	(sgml-insert-attdecl-comment): new func. Inserts comment
+	describing the attribute type with clickable parts.
+	(sgml-insert-selected-token): new func
+	(sgml-insert-selected-default): new func
+	(sgml-insert-token-group): new func.
+
+2005-03-12  Lennart Staflin  <lenst@lysator.liu.se>
+
+	* psgml-info.el (sgml-display-table): add buttons
+	(sgml-list-elements, sgml-list-attributes)
+	(sgml-list-content-elements, sgml-list-occur-in-elements): supply
+	button info
+	(sgml-eltype): new button type
+	(sgml-print-eltypes): new func
+	(sgml-describe-element-type): use sgml-print-eltypes where appropriate
+	(sgml-describe-dtd): add button for element types
+
+	* psgml.el (sgml-main-menu): adjust menu for new/renamed commands
+	sgml-load-doctype, sgml-describe-dtd
+
+2005-03-08  Lennart Staflin  <lenst@lysator.liu.se>
+
+	* psgml.el (psgml-version): bump version
+
+	* psgml-parse.el (sgml-parse-catalog-buffer): handle system and override
+	(sgml-catalog-lookup): new parameters, handle system and override
+	in catalogs.
+	(sgml-lookup-sysid-as-file): remove
+	(sgml-external-file): simplified and use new sgml-catalog-lookup
+	interface.
+
+2005-03-05  Lennart Staflin  <lenst@lysator.liu.se>
+
+	* Version 1.3.2 released
+
 2005-03-02  Lennart Staflin  <lenst@lysator.liu.se>
 
 	* psgml.el (sgml-mode-map): bind C-c C-s to new comman

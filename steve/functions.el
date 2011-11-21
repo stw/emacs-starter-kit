@@ -160,3 +160,20 @@ by using nxml's indentation rules."
       (insert ": " (mapconcat 'identity collect-names " ") "\n"))
     (let ((backup-inhibited t)) (save-buffer))
     (kill-buffer (current-buffer))))
+
+;; html tidy
+;; Function to run Tidy HTML parser on buffer
+;; NOTE: this requires external Tidy program
+(defun tidy-buffer ()
+  "Run Tidy HTML parser on current buffer."
+  (interactive)
+  (if (get-buffer "tidy-errs") (kill-buffer "tidy-errs"))
+  (shell-command-on-region (point-min) (point-max)
+                           "tidy --force-output yes -q -f /tmp/tidy-errs --gnu-emacs -asxhtml --input-xml --tidy-mark no -indent --indent-spaces 3 -wrap 0 --new-blocklevel-tags article,header,footer,nav --new-inline-tags video,audio,canvas,ruby,rt,rp --break-before-br yes --vertical-space no --doctype omit" t)
+  (find-file-other-window "/tmp/tidy-errs")
+  (other-window 1)
+  (delete-file "/tmp/tidy-errs")
+  (message "buffer tidy'ed")
+  )
+
+(global-set-key (kbd "C-x t") 'tidy-buffer)

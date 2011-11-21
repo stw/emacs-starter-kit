@@ -1,5 +1,5 @@
 ;;;; psgml-other.el --- Part of SGML-editing mode with parsing support
-;; $Id: psgml-other.el,v 2.25 2005/02/27 17:13:20 lenst Exp $
+;; $Id: psgml-other.el,v 2.26 2005/05/19 19:42:48 lenst Exp $
 
 ;; Copyright (C) 1994 Lennart Staflin
 
@@ -140,13 +140,22 @@ Overlays are significantly less efficient in large buffers.")
 	 (when (not modified)
 	   (sgml-restore-buffer-modified-p nil))))))
 
+(eval-when-compile
+  (defvar sgml-parse-in-loop))
+
 (defun sgml-set-face-for (start end type)
   (let ((face (cdr (assq type sgml-markup-faces))))
     (if (and (null type) sgml-current-tree)
         (setq face (sgml-element-appdata sgml-current-tree 'face)))
     (cond
      (sgml-use-text-properties
-      (sgml-with-modification-state
+      ;; `sgml-with-modification-state' is rather expensive.  If we're
+      ;; in the parsing loop, hoist the job out of the loop.
+      (if (not sgml-parse-in-loop)
+	  (sgml-with-modification-state
+	   (put-text-property start end 'face face)
+	   (when (and sgml-default-nonsticky (< start end))
+	     (put-text-property (1- end) end 'rear-nonsticky '(face))))
 	(put-text-property start end 'face face)
         (when (and sgml-default-nonsticky (< start end))
           (put-text-property (1- end) end 'rear-nonsticky '(face)))))
