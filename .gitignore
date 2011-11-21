@@ -23,7 +23,6 @@ history
 .org-id-locations
 *.bak
 ecb
-emacs-rails
 org-mode
 steve/auth
 elpa/zenburn-1.8/zenburn.el.orig
