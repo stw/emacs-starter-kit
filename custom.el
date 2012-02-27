@@ -1,3 +1,4 @@
+
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -18,7 +19,8 @@
  '(ns-antialias-text nil)
  '(ns-tool-bar-display-mode nil t)
  '(ns-tool-bar-size-mode nil t)
- '(org-agenda-files (quote ("~/org/business.org" "~/org/personal.org")) t)
+ '(one-buffer-one-frame-mode nil nil (aquamacs-frame-setup))
+ '(org-agenda-files (quote ("~/org/business.org" "~/org/personal.org")))
  '(php-file-patterns nil)
  '(safe-local-variable-values (quote ((Syntax . Common-Lisp) (Mode . Lisp) (ruby-compilation-executable . "ruby") (ruby-compilation-executable . "ruby1.8") (ruby-compilation-executable . "ruby1.9") (ruby-compilation-executable . "rbx") (ruby-compilation-executable . "jruby") (whitespace-line-column . 80) (lexical-binding . t))))
  '(show-paren-mode nil)

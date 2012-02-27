@@ -1,5 +1,13 @@
 ;; command logging
 ;; (add-hook 'rinari-mode-hook (function mwe:log-keyboard-commands))
+(require 'highlight-parentheses)
+(define-globalized-minor-mode global-highlight-parentheses-mode
+  highlight-parentheses-mode
+  (lambda ()
+    (highlight-parentheses-mode t)))
+(global-highlight-parentheses-mode t)
+
+
 (require 'dired-x) 
 (setq dired-omit-files 
       (rx (or (seq bol (? ".") "#")         ;; emacs autosave files 
@@ -14,9 +22,9 @@
 (add-hook 'dired-mode-hook (lambda () (dired-omit-mode 1))) 
 ;; use M-o to toggle mode
 
+;;(add-to-list 'load-path "~/.emacs.d/plugins/slime") 
+;;(add-to-list 'load-path "~/.emacs.d/steve/swank-clojure") 
 (require 'slime)
-(add-to-list 'load-path "~/.emacs.d/steve/slime") 
-(add-to-list 'load-path "~/.emacs.d/steve/swank-clojure") 
 (slime-setup '(slime-repl slime-fancy))
 (setq slime-lisp-implementations
       '((sbcl ("/usr/local/bin/sbcl"))
@@ -24,34 +32,16 @@
 (add-to-list 'auto-mode-alist '("\\.lisp" . slime-mode)) 
 (add-to-list 'auto-mode-alist '("\\.lisp" . lisp-mode))
 ;; coffee-mode
-(add-to-list 'load-path "~/.emacs.d/coffee-mode")
+(add-to-list 'load-path "~/.emacs.d/plugins/coffee-mode")
 (require 'coffee-mode)
 
-;;(require 'multi-web-mode)
-;;(setq mweb-default-major-mode 'html-mode)
-;;(setq mweb-tags '((php-mode "<\\?php\\|<\\? \\|<\\?=" "\\?>")
-;;                  (js-mode "<script +\\(type=\"text/javascript\"\\|language=\"javascript\"\\)[^>]*>" "</script>")
-;;                  (css-mode "<style +type=\"text/css\"[^>]*>" "</style>")))
-;;(setq mweb-filename-extensions '("inc", "php" "htm" "html" "ctp" "phtml" "php4" "php5"))
-;;(multi-web-global-mode 1)
-
-;;(add-to-list 'load-path "~/.emacs.d/js2-mode")
-;;(require 'js2-mode)
-;;(autoload 'js2-mode "js2-mode" nil t)
-;;(add-to-list 'auto-mode-alist '("\\.js$" . js2-mode))
-
-;;************************************************************
 ;; configure HTML editing
-;;************************************************************
-;;
 (require 'php-mode)
 (require 'javascript-mode) 
-
 (require 'psgml) 
 (setq sgml-auto-activate-dtd t)
 (setq sgml-indent-data t) 
 
-;;
 ;; configure css-mode
 (autoload 'css-mode "css-mode")
 (add-to-list 'auto-mode-alist '("\\.css\\'" . css-mode))
@@ -88,7 +78,9 @@
 (add-to-list 'mmm-mode-ext-classes-alist '(html-mode nil html-js))
 (add-to-list 'mmm-mode-ext-classes-alist '(html-mode nil embedded-css))
 (add-to-list 'mmm-mode-ext-classes-alist '(html-mode nil fancy-html))
-;;
+
+(add-hook 'html-mode-hook 'turn-off-auto-fill)
+
 ;; Not exactly related to editing HTML: enable editing help with mouse-3 in all sgml files
 (defun go-bind-markup-menu-to-mouse3 ()
         (define-key sgml-mode-map [(down-mouse-3)] 'sgml-tags-menu))
@@ -110,19 +102,13 @@
         (add-to-list 'mmm-save-local-variables `(,(car v) nil ,mmm-c-derived-modes))))))
 (save-mmm-c-locals)
 
-
 (autoload #'espresso-mode "espresso" "Start espresso-mode" t)
 (add-to-list 'auto-mode-alist '("\\.js$" . espresso-mode))
 (add-to-list 'auto-mode-alist '("\\.json$" . espresso-mode))
 
 ;; bookmark+
-(add-to-list 'load-path "~/.emacs.d/bookmark+") 
+(add-to-list 'load-path "~/.emacs.d/plugins/bookmark+") 
 (require 'bookmark+)
-
-;; bbdb
-;;(add-to-list 'load-path "~/.emacs.d/bbdb")
-;;(require 'bbdb)
-;;(bbdb-initialize)
 
 ;; fix yas to work w/ ruby
 (defun yas/advise-indent-function (function-symbol)
@@ -137,14 +123,6 @@
 
 (yas/advise-indent-function 'ruby-indent-line)
 (yas/advise-indent-function 'indent-and-complete)
-
-;; gnus
-;;(setq load-path (cons (expand-file-name "~/src/emacs/gnus/lisp") load-path))
-;;(require 'gnus-load)
-
-;; terminal colors
-;;(autoload 'ansi-color-for-comint-mode-on "ansi-color" nil t)
-;;(add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on)
 
 ;; ecb setup
 ;;(add-to-list 'load-path "~/.emacs.d/ecb")
@@ -170,7 +148,7 @@
 (global-set-key (kbd "C-<tab>") 'dabbrev-expand)
 (define-key minibuffer-local-map (kbd "C-<tab>") 'dabbrev-expand)
 
-  ;; Allow narrowing - restrict edits to page, region or defun
+;; Allow narrowing - restrict edits to page, region or defun
 (put 'narrow-to-defun 'disabled nil)     
 (put 'narrow-to-page 'disabled nil)     
 (put 'narrow-to-region 'disabled nil)
@@ -197,14 +175,14 @@
 (setq indent-line-function 'insert-tab)
 
 ;; github
-(setq gist-view-gist t)
+;; (setq gist-view-gist t)
 
 ;; rails setup
-(add-to-list 'load-path (expand-file-name "~/.emacs.d/emacs-rails"))
+(add-to-list 'load-path (expand-file-name "~/.emacs.d/plugins/emacs-rails"))
 (require 'rails)
 
-(add-to-list 'load-path (expand-file-name "~/.emacs.d/rinari"))
-(require 'rinari)
+;;(add-to-list 'load-path (expand-file-name "~/.emacs.d/plugins/rinari"))
+;;(require 'rinari)
 
 (add-to-list 'auto-mode-alist '("\\.scss$" . sass-mode))
 (global-set-key "\C-c\C-m" 'magit-status)
@@ -217,7 +195,7 @@
 ;; "Command to kill a compilation launched by `mode-compile'" t)
 ;;(global-set-key "\C-ck" 'mode-compile-kill)
 
-(defun eshell-banner-message "")
+;;(defun eshell-banner-message "")
 (setq explicit-shell-file-name "/bin/bash")
 (display-time)
 
@@ -235,7 +213,7 @@
 (global-set-key [remap backward-up-list] 'backward-up-sexp) 
 
 ;; textmate 
-(add-to-list 'load-path "~/.emacs.d/textmate")
+(add-to-list 'load-path "~/.emacs.d/plugins/textmate")
 (require 'textmate)
 (textmate-mode) 
 
@@ -276,3 +254,8 @@
   (font-lock-add-keywords nil hexcolour-keywords))
 
 (add-hook 'css-mode-hook 'hexcolour-add-to-font-lock)
+
+;; byte compile any lisp file on save
+;;
+(add-hook 'emacs-lisp-mode-hook '(lambda ()
+  (add-hook 'after-save-hook 'emacs-lisp-byte-compile t t)))

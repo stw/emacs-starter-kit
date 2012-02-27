@@ -1,13 +1,3 @@
-;; init.el --- Where all the magic begins
-;;
-;; Part of the Emacs Starter Kit
-;;
-;; This is the first thing to get loaded.
-;;
-;; "Emacs outshines all other editing software in approximately the
-;; same way that the noonday sun does the stars. It is not just bigger
-;; and brighter; it simply makes everything else vanish."
-;; -Neal Stephenson, "In the Beginning was the Command Line"
 
 ;; Turn off mouse interface early in startup to avoid momentary display
 ;; You really don't need these; trust me.
@@ -15,15 +5,10 @@
 (if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
 (if (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
 
-;; Load path etc.
-
 (setq dotfiles-dir (file-name-directory
                     (or (buffer-file-name) load-file-name)))
 
-;; Load up ELPA, the package manager
-
 (add-to-list 'load-path dotfiles-dir)
-
 (add-to-list 'load-path (concat dotfiles-dir "/elpa-to-submit"))
 
 (setq autoload-file (concat dotfiles-dir "loaddefs.el"))
@@ -37,6 +22,8 @@
                   ("marmalade" . "http://marmalade-repo.org/packages/")))
   (add-to-list 'package-archives source t))
 (package-initialize)
+
+(add-to-list 'load-path (concat dotfiles-dir "/plugins/starter-kit"))
 (require 'starter-kit-elpa)
 
 ;; These should be loaded on startup rather than autoloaded on demand
@@ -49,9 +36,6 @@
 (require 'ansi-color)
 (require 'recentf)
 
-;; backport some functionality to Emacs 22 if needed
-;;(require 'dominating-file)
-
 ;; Load up starter kit customizations
 
 (require 'starter-kit-defuns)
@@ -60,14 +44,25 @@
 (require 'starter-kit-registers)
 (require 'starter-kit-eshell)
 
-(add-to-list 'load-path "~/.emacs.d/slime") 
-(add-to-list 'load-path "~/.emacs.d/mmm-mode") 
-(add-to-list 'load-path "~/.emacs.d/psgml") 
+(add-to-list 'load-path (concat dotfiles-dir "/plugins/slime"))
 (require 'starter-kit-lisp)
 
 (require 'starter-kit-perl)
 (require 'starter-kit-ruby)
 (require 'starter-kit-js)
+
+(add-to-list 'load-path (concat dotfiles-dir "/plugins/mmm-mode"))
+(add-to-list 'load-path (concat dotfiles-dir "/plugins/psgml"))
+
+(add-to-list 'load-path (concat dotfiles-dir "/plugins/yasnippet"))
+(require 'yasnippet)
+(yas/global-mode 1)
+
+(add-to-list 'load-path (concat dotfiles-dir "/plugins/auto-complete"))
+(require 'auto-complete)
+(add-to-list 'ac-dictionary-directories "~/.emacs.d/plugins/auto-complete/dict")
+(require 'auto-complete-config)
+(ac-config-default)
 
 (regen-autoloads)
 (load custom-file 'noerror)
@@ -83,7 +78,4 @@
 (if (file-exists-p user-specific-dir)
   (mapc #'load (directory-files user-specific-dir nil ".*el$")))
 
-;;(setq slime-lisp-implementations
-;;      '((sbcl ("/usr/local/bin/sbcl"))
-;;     (clojure ("/Users/steve/bin/clojure") :init swank-clojure-init)))
-
+(setq aquamacs-scratch-file "~/src/emacs/scratch")

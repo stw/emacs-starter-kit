@@ -1,3 +1,4 @@
+
 ;;; rainbow-delimiters.el --- Colorize nested delimiters: () [] {}
 
 ;; Copyright (C) 2010  Jeremy Rayman

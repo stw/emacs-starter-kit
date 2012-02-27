@@ -1,3 +1,4 @@
+
 ;;; rainbow-parens.el --- Argh!  My eyes!
 
 ;; Copyright (C) 2009  Mark Triggs

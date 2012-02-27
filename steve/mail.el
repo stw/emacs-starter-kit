@@ -1,3 +1,4 @@
+
 ;; Mail setup
 (require 'nnimap)
 (require 'smtpmail)

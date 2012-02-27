@@ -1,3 +1,4 @@
+
 ;;; package.el --- Simple package system for Emacs
 
 ;; Copyright (C) 2007, 2008, 2009, 2010 Free Software Foundation, Inc.

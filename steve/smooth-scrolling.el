@@ -1,3 +1,4 @@
+
 ;; smooth-scrolling.el
 ;; $Id: smooth-scrolling.el,v 1.10 2009-12-19 01:45:28 adam Exp $
 ;; Adam Spiers <emacs-ss@adamspiers.org>

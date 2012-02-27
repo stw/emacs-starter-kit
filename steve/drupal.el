@@ -1,3 +1,4 @@
+
 (defun drupal-mode ()
   "Drupal php-mode."
   (interactive)

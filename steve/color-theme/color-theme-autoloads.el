@@ -1,3 +1,4 @@
+
 ;;; -*-emacs-lisp-*-
 
 ;; Copyright (C) 2002 Free Software Foundation, Inc.

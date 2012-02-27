@@ -1,3 +1,4 @@
+
 ;; You can autoload, but at the end of this block we'll
 ;; connect to two networks anyway.
 (require 'rcirc)

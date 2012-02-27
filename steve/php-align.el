@@ -1,3 +1,4 @@
+
 ;;; php-align.el --- Alignment configuration for PHP.
 
 ;; Copyright (C) 2011  tetsujin (Yusuke Segawa)
