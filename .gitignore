@@ -27,4 +27,5 @@ org-mode
 steve/auth
 elpa/zenburn-1.8/zenburn.el.orig
 js2-mode/
-steve/log-commands.el
+steve/log-commands.el 
+archive
