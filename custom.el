@@ -23,6 +23,7 @@
  '(org-agenda-files (quote ("~/org/business.org" "~/org/personal.org")))
  '(php-file-patterns nil)
  '(safe-local-variable-values (quote ((Syntax . Common-Lisp) (Mode . Lisp) (ruby-compilation-executable . "ruby") (ruby-compilation-executable . "ruby1.8") (ruby-compilation-executable . "ruby1.9") (ruby-compilation-executable . "rbx") (ruby-compilation-executable . "jruby") (whitespace-line-column . 80) (lexical-binding . t))))
+ '(server-mode t)
  '(show-paren-mode nil)
  '(tabbar-mode nil nil (tabbar))
  '(visual-line-mode nil t)

@@ -16,7 +16,7 @@
         (set-variable 'py-indent-offset 4)
         ;(set-variable 'py-smart-indentation nil)
         (set-variable 'indent-tabs-mode nil)
-        (define-key py-mode-map (kbd "RET") 'newline-and-indent)
+        (define-key python-mode-map (kbd "RET") 'newline-and-indent)
         ;(define-key py-mode-map [tab] 'yas/expand)
         ;(setq yas/after-exit-snippet-hook 'indent-according-to-mode)
         ;(smart-operator-mode-on)
@@ -106,7 +106,8 @@
 
 (defadvice ac-cleanup (after advice-turn-off-auto-start activate)
   (set (make-local-variable 'ac-auto-start) nil))
-(define-key python-mode-map "\t" 'ryan-python-tab)
+;;(define-key python-mode-map "\t" 'ryan-python-tab)
+(define-key python-mode-map (kbd "C-c i") 'pylookup-lookup)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; End Auto Completion
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

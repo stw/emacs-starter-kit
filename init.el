@@ -51,6 +51,10 @@
 (require 'starter-kit-ruby)
 (require 'starter-kit-js)
 
+(add-to-list 'load-path (concat dotfiles-dir "/plugins/org-mode/lisp"))
+(require 'org)
+(setq org-src-fontify-natively t)
+
 (add-to-list 'load-path (concat dotfiles-dir "/plugins/mmm-mode"))
 (add-to-list 'load-path (concat dotfiles-dir "/plugins/psgml"))
 

@@ -1,3 +1,5 @@
+(server-start) 
+
 ;; command logging
 ;; (add-hook 'rinari-mode-hook (function mwe:log-keyboard-commands))
 (require 'highlight-parentheses)
