@@ -1,0 +1,6 @@
+[submodule "coffee-mode"]
+	path = plugins/coffee-mode
+	url = https://github.com/defunkt/coffee-mode.git
+[submodule "rinari"]
+	path = plugins/rinari
+	url = https://github.com/eschulte/rinari.git
