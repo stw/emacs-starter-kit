@@ -1,11 +1,12 @@
 
-(add-to-list 'load-path "~/src/python/python-mode")
+;; (add-to-list 'load-path "~/src/python/python-mode")
 ;; (add-to-list 'load-path "~/src/python/rope")
 ;; (add-to-list 'load-path "~/src/python/ropemode") 
 ;; (add-to-list 'load-path "~/src/python/ropemacs")
-;; (add-to-list 'load-path "~/src/python/Pymacs")
+(add-to-list 'load-path "~/src/python/pymacs")
 
-(setq py-install-directory "~/src/python/python-mode")
+(add-to-list 'load-path "~/.emacs.d/plugins/python-mode")
+(setq py-install-directory "~/.emacs.d/plugins/python-mode")
 
 (autoload 'python-mode "python-mode" "Python Mode." t)
 (add-to-list 'auto-mode-alist '("\\.py\\'" . python-mode))
@@ -21,14 +22,19 @@
         ;(setq yas/after-exit-snippet-hook 'indent-according-to-mode)
         ;(smart-operator-mode-on)
         ))
+
 ;; pymacs
+(add-to-list 'load-path "/usr/share/pyshared/Pymacs")
+(add-to-list 'load-path "/usr/share/emacs/site-lisp/pymacs")
+(require 'pymacs)
+
 (autoload 'pymacs-apply "pymacs")
 (autoload 'pymacs-call "pymacs")
 (autoload 'pymacs-eval "pymacs" nil t)
 (autoload 'pymacs-exec "pymacs" nil t)
 (autoload 'pymacs-load "pymacs" nil t)
-;; (eval-after-load "pymacs"
-;;   '(add-to-list 'pymacs-load-path "/Users/steve/src/python/Pymacs"))
+;;(eval-after-load "pymacs"
+;;	'(add-to-list 'pymacs-load-path "/usr/share/pyshared/Pymacs"))
 (setq ropemacs-global-prefix "C-x /") 
 (pymacs-load "ropemacs" "rope-")
 (setq ropemacs-enable-autoimport t)

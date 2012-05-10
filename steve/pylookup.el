@@ -1,6 +1,6 @@
 
 ;; add pylookup to your loadpath, ex) ~/.emacs.d/pylookup
-(setq pylookup-dir "~/src/python/libs/pylookup")
+(setq pylookup-dir "~/.emacs.d/plugins/pylookup")
 (add-to-list 'load-path pylookup-dir)
 
 ;; load pylookup when compile time
