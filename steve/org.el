@@ -18,12 +18,16 @@
 ;; Make TAB the yas trigger key in the org-mode-hook and enable flyspell mode and autofill
 (add-hook 'org-mode-hook
           (lambda ()
+            ;; turn of mate mode
+            (textmate-mode 0)
             ;; yasnippet
             (make-variable-buffer-local 'yas/trigger-key)
             (org-set-local 'yas/trigger-key [tab])
             (define-key yas/keymap [tab] 'yas/next-field-group)
             ;; flyspell mode for spell checking everywhere
             (flyspell-mode 1)
+            ;; rebind control enter
+            (define-key cua-global-keymap cua-rectangle-mark-key 'org-insert-heading-respect-content)
             ;; Undefine C-c [ and C-c ] since this breaks my org-agenda files when directories are include
             ;; It expands the files in the directories individually
             (org-defkey org-mode-map "\C-c["    'undefined)

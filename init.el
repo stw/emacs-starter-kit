@@ -60,7 +60,7 @@
 
 (add-to-list 'load-path (concat dotfiles-dir "/plugins/yasnippet"))
 (require 'yasnippet)
-(yas/global-mode 1)
+(yas/minor-mode 1)
 
 (add-to-list 'load-path (concat dotfiles-dir "/plugins/auto-complete"))
 (require 'auto-complete)
