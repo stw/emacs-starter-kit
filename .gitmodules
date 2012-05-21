@@ -1,0 +1,30 @@
+[submodule "coffee-mode"]
+	path = plugins/coffee-mode
+	url = https://github.com/defunkt/coffee-mode.git
+[submodule "rinari"]
+	path = plugins/rinari
+	url = https://github.com/eschulte/rinari.git
+[submodule "slime"]
+	path = plugins/slime
+	url = https://github.com/nablaone/slime.git
+[submodule "slime"]
+	path = steve/git/slime
+	url = https://github.com/nablaone/slime.git
+[submodule "yasnippet"]
+	path = plugins/yasnippet
+	url = https://github.com/capitaomorte/yasnippet.git
+[submodule "swank-clojure"]
+	path = steve/git/swank-clojure
+	url = https://github.com/jochu/swank-clojure.git
+[submodule "plugins/javascript-mode"]
+	path = plugins/javascript-mode
+	url = https://github.com/emacsattic/javascript-mode.git
+[submodule "steve/git/clojure-mode"]
+	path = steve/git/clojure-mode
+	url = https://github.com/jochu/clojure-mode.git
+[submodule "plugins/pylookup"]
+	path = plugins/pylookup
+	url = https://github.com/tsgates/pylookup.git
+[submodule "plugins/python-mode"]
+	path = plugins/python-mode
+	url = https://github.com/emacsmirror/python-mode.git

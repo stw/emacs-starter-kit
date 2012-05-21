@@ -39,6 +39,8 @@
 
 ;; configure HTML editing
 (require 'php-mode)
+
+(add-to-list 'load-path "~/.emacs.d/plugins/javascript-mode")
 (require 'javascript-mode) 
 (require 'psgml) 
 (setq sgml-auto-activate-dtd t)
@@ -165,8 +167,8 @@
      (color-theme-initialize)
      (color-theme-zenburn)))
 
-(set-face-attribute 'default nil :family "Monaco" :height 140 :weight 'normal)
-(set-face-attribute 'font-lock-string-face nil :family "Monaco" :height 140)
+;;(set-face-attribute 'default nil :family "Monaco" :height 140 :weight 'normal)
+;;(set-face-attribute 'font-lock-string-face nil :family "Monaco" :height 140)
 
 ;; set tabs
 (setq indent-tabs-mode nil)
