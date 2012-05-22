@@ -7,9 +7,6 @@
 [submodule "slime"]
 	path = plugins/slime
 	url = https://github.com/nablaone/slime.git
-[submodule "slime"]
-	path = steve/git/slime
-	url = https://github.com/nablaone/slime.git
 [submodule "yasnippet"]
 	path = plugins/yasnippet
 	url = https://github.com/capitaomorte/yasnippet.git

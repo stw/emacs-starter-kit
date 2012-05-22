@@ -628,7 +628,7 @@ The timer is used only if `post-gc-hook' is not available.")
           (if (and (pymacs-proper-list-p reply)
                    (= (length reply) 2)
                    (eq (car reply) 'version))
-              (unless (string-equal (cadr reply) "0.25")
+              (unless (string-equal (cadr reply) "0.24-beta2")
                 (pymacs-report-error
                  "Pymacs Lisp version is 0.25, Python is %s"
                  (cadr reply)))
