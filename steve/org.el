@@ -148,4 +148,20 @@ SCHEDULED: %t
 :STYLE: habit
 :END:"))))
 
+(setq remember-annotation-functions '(org-remember-annotation))
+(setq remember-handler-functions '(org-remember-handler))
+(add-hook 'remember-mode-hook 'org-remember-apply-template)
+(define-key global-map "\C-cr" 'org-remember)
+
+(setq org-remember-templates
+     '(("Todo" ?t "* TODO %? %^g\n %i\n " "~/org/business.org" "Office")
+      ("Journal" ?j "\n* %^{topic} %T \n%i%?\n" "~/org/journal.org")
+      ("Book" ?b "\n* %^{Book Title} %t :READING: \n%[~/org/booktemp.txt]\n" 
+              "~/org/journal.org")
+      ("Calls" ?c "\n* %^{Name} called [%^{Number}]: %? %T :CONTACT:\n" 
+       "~/org/calls.org")
+      ))
+
+
+
 ;; (find-file "~/org/business.org")

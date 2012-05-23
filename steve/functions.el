@@ -137,9 +137,9 @@ by using nxml's indentation rules."
 
 ;; bookmarks to zsh
 
-(defadvice bookmark-write-file 
-  (after local-directory-bookmarks-to-zsh-advice activate)
-  (local-directory-bookmarks-to-zsh))
+;;(defadvice bookmark-write-file 
+;;  (after local-directory-bookmarks-to-zsh-advice activate)
+;;  (local-directory-bookmarks-to-zsh))
 
 (defun local-directory-bookmarks-to-zsh () 
   (interactive)
