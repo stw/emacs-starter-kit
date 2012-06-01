@@ -2,11 +2,24 @@
 (add-to-list 'load-path (expand-file-name "~/.emacs.d/org-mode/lisp"))
 (require 'org-install)
 
+(setq org-use-fast-todo-selection 'expert)
+(setq org-agenda-skip-if-done t)
+(setq org-agenda-skip-deadline-if-done t)
+(setq org-agenda-skip-scheduled-if-done t)
+(setq org-treat-S-cursor-todo-selection-as-state-change nil)
+(setq org-log-done t)
+(setq org-icalendar-include-todo t)
+(setq org-combined-agenda-icalendar-file "~/org/org.ics")
+(setq org-agenda-time-grid '((daily require-timed)
+                             "--------------------"
+                             (800 1000 1200 1400 1600 1800 2000 2200)))
+
 ;; key bindings
 (global-set-key "\C-cb" 'org-iswitchb)
 (global-set-key (kbd "<f12>") 'org-agenda)
 (global-set-key (kbd "S-<f11>") 'org-clock-in)
 (global-set-key (kbd "C-<f11>") 'org-clock-out)
+(global-set-key (kbd "C-c r") 'org-remember)
 
 ;; org mode in gnus
 (setq message-mode-hook
@@ -35,49 +48,47 @@
             (local-set-key (kbd "C-c M-o") 'bh/mail-subtree)))
 
 ;; todo state keywords C-c C-t KEY
-;; (setq org-todo-keywords (quote (( sequence "TODO(t)" "Done(d!/!)")))) 
-(setq org-todo-keywords (quote ((sequence "TODO(t)" "NEXT(n)" "STARTED(s)" "WAITING(w@/!)" "SOMEDAY(S!)" "|" "DONE(d!/!)" "CANCELLED(c@/!)")
-                                 (sequence "QUOTE(Q!)" "QUOTED(D!)" "|" "APPROVED(A@)" "EXPIRED(E@)" "REJECTED(R@)")
-                                 (sequence "OPEN(O!)" "|" "CLOSED(C!)"))))
-(setq org-use-fast-todo-selection t)
-(setq org-treat-S-cursor-todo-selection-as-state-change nil)
+(setq org-todo-keywords (quote (( sequence "TODO(t)" "DONE(d!/!)")))) 
+;; (setq org-todo-keywords (quote ((sequence "TODO(t)" "NEXT(n)" "STARTED(s)" "WAITING(w@/!)" "SOMEDAY(S!)" "|" "DONE(d!/!)" "CANCELLED(c@/!)")
+;;                                 (sequence "QUOTE(Q!)" "QUOTED(D!)" "|" "APPROVED(A@)" "EXPIRED(E@)" "REJECTED(R@)")
+;;                                 (sequence "OPEN(O!)" "|" "CLOSED(C!)"))))
 
-(setq org-todo-state-tags-triggers
-      (quote (("CANCELLED"
-               ("CANCELLED" . t))
-              ("WAITING"
-               ("WAITING" . t))
-              ("SOMEDAY"
-               ("WAITING" . t))
-              (done
-               ("WAITING"))
-              ("TODO"
-               ("WAITING")
-               ("CANCELLED"))
-              ("NEXT"
-               ("WAITING"))
-              ("STARTED"
-               ("WAITING"))
-              ("DONE"
-               ("WAITING")
-               ("CANCELLED")))))
+;; (setq org-todo-state-tags-triggers
+;;       (quote (("CANCELLED"
+;;                ("CANCELLED" . t))
+;;               ("WAITING"
+;;                ("WAITING" . t))
+;;               ("SOMEDAY"
+;;                ("WAITING" . t))
+;;               (done
+;;                ("WAITING"))
+;;               ("TODO"
+;;                ("WAITING")
+;;                ("CANCELLED"))
+;;               ("NEXT"
+;;                ("WAITING"))
+;;               ("STARTED"
+;;                ("WAITING"))
+;;               ("DONE"
+;;                ("WAITING")
+;;                ("CANCELLED")))))
 
-(defun bh/clock-in-to-started (kw)
-  "Switch task from TODO or NEXT to STARTED when clocking in.
-Skips capture tasks and tasks with subtasks"
-  (if (and (member (org-get-todo-state) (list "TODO" "NEXT"))
-           (not (and (boundp 'org-capture-mode) org-capture-mode))
-           (not (bh/is-project-p)))
-      "STARTED"))
+;; (defun bh/clock-in-to-started (kw)
+;;   "Switch task from TODO or NEXT to STARTED when clocking in.
+;; Skips capture tasks and tasks with subtasks"
+;;   (if (and (member (org-get-todo-state) (list "TODO" "NEXT"))
+;;            (not (and (boundp 'org-capture-mode) org-capture-mode))
+;;            (not (bh/is-project-p)))
+;;       "STARTED"))
 
-;; Remove empty LOGBOOK drawers on clock out
-(defun bh/remove-empty-drawer-on-clock-out ()
-  (interactive)
-  (save-excursion
-    (beginning-of-line 0)
-    (org-remove-empty-drawer-at "LOGBOOK" (point))))
+;; ;; Remove empty LOGBOOK drawers on clock out
+;; (defun bh/remove-empty-drawer-on-clock-out ()
+;;   (interactive)
+;;   (save-excursion
+;;     (beginning-of-line 0)
+;;     (org-remove-empty-drawer-at "LOGBOOK" (point))))
 
-(add-hook 'org-clock-out-hook 'bh/remove-empty-drawer-on-clock-out 'append)
+;; (add-hook 'org-clock-out-hook 'bh/remove-empty-drawer-on-clock-out 'append)
 
 ;; refiling
 ; Use IDO for target completion
@@ -121,45 +132,45 @@ Skips capture tasks and tasks with subtasks"
 ;;(setq org-file-apps "*")
 ;; (setq org-agenda-repeating-timestamp-show-all nil)
 
-;; C-M-r to start capture mode
-(global-set-key (kbd "C-M-r") 'org-capture)
+;; ;; C-M-r to start capture mode
+;; (global-set-key (kbd "C-M-r") 'org-capture)
 
-;; Capture templates for: TODO tasks, Notes, appointments, phone calls, and org-protocol
-(setq org-capture-templates (quote (
-                                    ("t" "todo" entry (file "~/org/inbox.org") "* TODO %?
-%U
-%a" :clock-in t :clock-resume t)
-                                    ("n" "note" entry (file "~/org/inbox.org") "* %?                                                                            :NOTE:
-%U
-%a
-:LOGBOOK:
-:END:" :clock-in t :clock-resume t)
-                                    ("j" "Journal" entry (file+datetree "~/org/journal.org") "* %?
-%U" :clock-in t :clock-resume t)
-                                    ("w" "org-protocol" entry (file "~/org/inbox.org") "* TODO Review %c
-%U" :immediate-finish t)
-                                    ("p" "Phone call" entry (file "~/org/inbox.org") "* PHONE %(bh/phone-call) - %(gjg/bbdb-company) :PHONE:
-%U
+;; ;; Capture templates for: TODO tasks, Notes, appointments, phone calls, and org-protocol
+;; (setq org-capture-templates (quote (
+;;                                     ("t" "todo" entry (file "~/org/inbox.org") "* TODO %?
+;; %U
+;; %a" :clock-in t :clock-resume t)
+;;                                     ("n" "note" entry (file "~/org/inbox.org") "* %?                                                                            :NOTE:
+;; %U
+;; %a
+;; :LOGBOOK:
+;; :END:" :clock-in t :clock-resume t)
+;;                                     ("j" "Journal" entry (file+datetree "~/org/journal.org") "* %?
+;; %U" :clock-in t :clock-resume t)
+;;                                     ("w" "org-protocol" entry (file "~/org/inbox.org") "* TODO Review %c
+;; %U" :immediate-finish t)
+;;                                     ("p" "Phone call" entry (file "~/org/inbox.org") "* PHONE %(bh/phone-call) - %(gjg/bbdb-company) :PHONE:
+;; %U
 
-%?" :clock-in t :clock-resume t)
-                                    ("h" "Habit" entry (file "~/org/inbox.org") "* TODO %?
-SCHEDULED: %t
-:PROPERTIES:
-:STYLE: habit
-:END:"))))
+;; %?" :clock-in t :clock-resume t)
+;;                                     ("h" "Habit" entry (file "~/org/inbox.org") "* TODO %?
+;; SCHEDULED: %t
+;; :PROPERTIES:
+;; :STYLE: habit
+;; :END:"))))
 
+;; remember functionality
 (setq remember-annotation-functions '(org-remember-annotation))
 (setq remember-handler-functions '(org-remember-handler))
 (add-hook 'remember-mode-hook 'org-remember-apply-template)
-(define-key global-map "\C-cr" 'org-remember)
 
 (setq org-remember-templates
      '(("Todo" ?t "* TODO %? %^g\n %i\n " "~/org/business.org" "Office")
+      ("Calls" ?c "\n* %^{Name} %T :CONTACT:\n\t%?" 
+       "~/org/calls.org")
       ("Journal" ?j "\n* %^{topic} %T \n%i%?\n" "~/org/journal.org")
       ("Book" ?b "\n* %^{Book Title} %t :READING: \n%[~/org/booktemp.txt]\n" 
-              "~/org/journal.org")
-      ("Calls" ?c "\n* %^{Name} called [%^{Number}]: %? %T :CONTACT:\n" 
-       "~/org/calls.org")
+       "~/org/journal.org")
       ))
 
 

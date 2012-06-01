@@ -161,11 +161,22 @@
 
 ;; colors and fonts
 (add-to-list 'load-path "~/.emacs.d/steve/color-theme")
+;;(add-to-list 'load-path "~/.emacs.d/steve/color-theme/themes")
 (require 'color-theme)
-(eval-after-load "color-theme"
-  '(progn
-     (color-theme-initialize)
-     (color-theme-zenburn)))
+(color-theme-initialize)
+;; Set initial theme to "dark"
+(setq dark-or-light 'dark)
+(color-theme-solarized dark-or-light)
+
+;; Shortcut to toggle between light and dark
+(global-set-key (kbd "C-c ,")
+                (lambda ()
+                  (interactive)
+                  (if (eq dark-or-light 'light)
+                      (setq dark-or-light 'dark)
+                    (setq dark-or-light 'light)
+                    )
+                  (color-theme-solarized dark-or-light)))
 
 ;;(set-face-attribute 'default nil :family "Monaco" :height 140 :weight 'normal)
 ;;(set-face-attribute 'font-lock-string-face nil :family "Monaco" :height 140)

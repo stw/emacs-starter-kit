@@ -25,3 +25,6 @@
 [submodule "plugins/python-mode"]
 	path = plugins/python-mode
 	url = https://github.com/emacsmirror/python-mode.git
+[submodule "plugins/bbdb"]
+	path = plugins/bbdb
+	url = https://github.com/emacsmirror/bbdb.git
