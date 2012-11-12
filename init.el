@@ -60,14 +60,17 @@
 
 (add-to-list 'load-path (concat dotfiles-dir "/plugins/yasnippet"))
 (require 'yasnippet)
-;; (yas/minor-mode 1)
-(yas/global-mode 1)
+(yas/minor-mode 1)
+;;(yas/global-mode 1)
 
 (add-to-list 'load-path (concat dotfiles-dir "/plugins/auto-complete"))
 (require 'auto-complete)
 (add-to-list 'ac-dictionary-directories "~/.emacs.d/plugins/auto-complete/dict")
 (require 'auto-complete-config)
 (ac-config-default)
+
+(add-to-list 'load-path (concat dotfiles-dir "/plugins/js2-mode"))
+(require 'js2-mode)
 
 (regen-autoloads)
 (load custom-file 'noerror)

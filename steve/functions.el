@@ -1,5 +1,33 @@
 
 ;; personal
+;; http://ergoemacs.org/emacs/elisp_examples.html
+
+(defun swap-quotes (start end)
+  "swap quotes, single to double, double to single"
+  (interactive "r")
+  (save-restriction
+    (narrow-to-region start end)
+    (goto-char (point-min))
+    (while (search-forward "\"" nil t) (replace-match "`" nil t))
+    (goto-char (point-min))
+    (while (search-forward "'" nil t) (replace-match "\"" nil t))
+    (goto-char (point-min))
+    (while (search-forward "`" nil t) (replace-match "'" nil t))))
+
+(defun vi-dw (arg)
+  "Delete all white space from point to the next word.  With prefix ARG
+    delete across newlines as well.  The only danger in this is that you
+    don't have to actually be at the end of a word to make it work.  It
+    skips over to the next whitespace and then whacks it all to the next
+    word."
+  (interactive "P")
+  (let ((regexp (if arg "[ \t\n]+" "[ \t]+")))
+    (re-search-forward regexp nil t)
+    (replace-match "" nil nil)))
+
+(defun get-quote (ticker)
+  (string-to-number (shell-command-to-string (concat "/Users/steve/bin/quote.sh " ticker))))
+
 (defun yank-pop-forwards (arg)
   (interactive "p")
   (yank-pop (- arg)))
@@ -178,3 +206,27 @@ by using nxml's indentation rules."
   )
 
 (global-set-key (kbd "C-x t") 'tidy-buffer)
+
+;; set and jump to mark without setting region
+
+(defun push-mark-no-activate ()
+  "Pushes `point' to `mark-ring' and does not activate the region
+Equivalent to \\[set-mark-command] when \\[transient-mark-mode] is disabled"
+  (interactive)
+  (push-mark (point) t nil)
+  (message "Pushed mark to ring"))
+(global-set-key (kbd "C-'") 'push-mark-no-activate)
+
+(defun jump-to-mark ()
+  "Jumps to the local mark, respecting the `mark-ring' order.
+This is the same as using \\[set-mark-command] with the prefix argument."
+  (interactive)
+  (set-mark-command 1))
+(global-set-key (kbd "M-'") 'jump-to-mark)
+
+(defun exchange-point-and-mark-no-activate ()
+  "Identical to \\[exchange-point-and-mark] but will not activate the region."
+  (interactive)
+  (exchange-point-and-mark)
+  (deactivate-mark nil))
+(define-key global-map [remap exchange-point-and-mark] 'exchange-point-and-mark-no-activate)

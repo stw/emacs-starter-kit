@@ -132,47 +132,48 @@
 ;;(setq org-file-apps "*")
 ;; (setq org-agenda-repeating-timestamp-show-all nil)
 
-;; ;; C-M-r to start capture mode
-;; (global-set-key (kbd "C-M-r") 'org-capture)
+;; C-M-r to start capture mode
+(global-set-key (kbd "C-c c") 'org-capture)
 
-;; ;; Capture templates for: TODO tasks, Notes, appointments, phone calls, and org-protocol
-;; (setq org-capture-templates (quote (
-;;                                     ("t" "todo" entry (file "~/org/inbox.org") "* TODO %?
-;; %U
-;; %a" :clock-in t :clock-resume t)
-;;                                     ("n" "note" entry (file "~/org/inbox.org") "* %?                                                                            :NOTE:
-;; %U
-;; %a
-;; :LOGBOOK:
-;; :END:" :clock-in t :clock-resume t)
-;;                                     ("j" "Journal" entry (file+datetree "~/org/journal.org") "* %?
-;; %U" :clock-in t :clock-resume t)
-;;                                     ("w" "org-protocol" entry (file "~/org/inbox.org") "* TODO Review %c
-;; %U" :immediate-finish t)
-;;                                     ("p" "Phone call" entry (file "~/org/inbox.org") "* PHONE %(bh/phone-call) - %(gjg/bbdb-company) :PHONE:
-;; %U
-
-;; %?" :clock-in t :clock-resume t)
-;;                                     ("h" "Habit" entry (file "~/org/inbox.org") "* TODO %?
-;; SCHEDULED: %t
-;; :PROPERTIES:
-;; :STYLE: habit
-;; :END:"))))
+;; Capture templates for: TODO tasks, Notes, appointments, phone calls, and org-protocol
+(setq org-capture-templates '(
+                              ("t" "Create Todo" entry (file+headline "~/org/business.org" "Office") "* TODO %? :Office:" :clock-in t :clock-resume t)
+                              ("p" "New Phone Call" entry (file+headline "~/org/business.org" "Calls") "* PHONE %? :PHONE:" :clock-in t :clock-resume t)
+                              ("j" "Create Journal Entry" entry (file+datetree "~/org/journal.org") "* %? %U" :clock-in t :clock-resume t)
+                              ("n" "Create Note" entry (file+headline "~/org/inbox.org" "Notes") (file "~/org/note.tpl") :clock-in t :clock-resume t)
+                              ))
 
 ;; remember functionality
 (setq remember-annotation-functions '(org-remember-annotation))
 (setq remember-handler-functions '(org-remember-handler))
 (add-hook 'remember-mode-hook 'org-remember-apply-template)
 
-(setq org-remember-templates
-     '(("Todo" ?t "* TODO %? %^g\n %i\n " "~/org/business.org" "Office")
-      ("Calls" ?c "\n* %^{Name} %T :CONTACT:\n\t%?" 
-       "~/org/calls.org")
-      ("Journal" ?j "\n* %^{topic} %T \n%i%?\n" "~/org/journal.org")
-      ("Book" ?b "\n* %^{Book Title} %t :READING: \n%[~/org/booktemp.txt]\n" 
-       "~/org/journal.org")
-      ))
+;; (org-remember-insinuate)
 
+;; (setq org-remember-templates
+;;      '(("Todo" ?t "* TODO %? %^g\n %i\n " "~/org/business.org" "Office")
+;;       ("Calls" ?c "\n* %^{Name} %T :CONTACT:\n\t%?" 
+;;        "~/org/calls.org")
+;;       ("Journal" ?j "\n* %^{topic} %T \n%i%?\n" "~/org/journal.org")
+;;       ("Book" ?b "\n* %^{Book Title} %t :READING: \n%[~/org/booktemp.txt]\n" 
+;;        "~/org/journal.org")
+;;      ))
 
+(setq org-clock-persist 'history)
+(org-clock-persistence-insinuate)
+(setq org-clock-idle-time 15)
 
-;; (find-file "~/org/business.org")
+(find-file "~/org/index.org")
+
+;; (add-hook 'org-mode-hook '(lambda ()
+;;                             (add-hook 'after-save-hook 'org-mobile-push t t))))
+
+(setq org-link-abbrev-alist
+      '(("dev"    . "http://%s.dev.walkertek.com")
+        ("google" . "http://www.google.com/search?q=")
+        ("gmap"   . "http://maps.google.com/maps?q=%s")
+        ("yf"     . "http://finance.yahoo.com/q/ks?s=%s+Key+Statistics")
+        ("gf"     . "http://www.google.com/finance?q=%s")
+        ("sc"     . "http://stockcharts.com/h-sc/ui?s=%s")
+        ))
+

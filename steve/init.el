@@ -1,5 +1,22 @@
 (server-start) 
 
+;;(autoload 'python-mode "after-load/python" "" t)
+;;(require "after-load/python")
+
+;; ace-jump-mode
+(require 'ace-jump-mode)
+(define-key global-map (kbd "C-c SPC") 'ace-jump-mode)
+
+;; expand region
+(add-to-list 'load-path "~/.emacs.d/plugins/expand-region")
+(require 'expand-region)
+(global-set-key (kbd "C-=") 'er/expand-region)
+
+;; openwith 
+(require 'openwith) 
+(setq openwith-associations '(("\\.pdf\\'" "open" (file))))
+(openwith-mode t)
+
 ;; command logging
 ;; (add-hook 'rinari-mode-hook (function mwe:log-keyboard-commands))
 (require 'highlight-parentheses)
@@ -32,16 +49,17 @@
       '((sbcl ("/usr/local/bin/sbcl"))
      (clojure ("/Users/steve/bin/clojure") :init swank-clojure-init))) 
 (add-to-list 'auto-mode-alist '("\\.lisp" . slime-mode)) 
-(add-to-list 'auto-mode-alist '("\\.lisp" . lisp-mode))
+       (add-to-list 'auto-mode-alist '("\\.lisp" . lisp-mode))
+
 ;; coffee-mode
 (add-to-list 'load-path "~/.emacs.d/plugins/coffee-mode")
 (require 'coffee-mode)
 
 ;; configure HTML editing
 (require 'php-mode)
-
-(add-to-list 'load-path "~/.emacs.d/plugins/javascript-mode")
-(require 'javascript-mode) 
+                                   
+;;(add-to-list 'load-path "~/.emacs.d/plugins/javascript-mode")
+;;(require 'javascript-mode) 
 (require 'psgml) 
 (setq sgml-auto-activate-dtd t)
 (setq sgml-indent-data t) 
@@ -51,64 +69,45 @@
 (add-to-list 'auto-mode-alist '("\\.css\\'" . css-mode))
 (setq cssm-indent-function #'cssm-c-style-indenter)
 (setq cssm-indent-level '2)
+
 ;;
 (add-hook 'php-mode-user-hook 'turn-on-font-lock)
-;;
-(require 'mmm-mode)
-(setq mmm-global-mode 'maybe)
-;;
-;; set up an mmm group for fancy html editing
-(mmm-add-group
- 'fancy-html
- '(
-         (html-php-tagged
-                :submode php-mode
-                :face mmm-code-submode-face
-                :front "<[?]php"
-                :back "[?]>")
-         (html-css-attribute
-                :submode css-mode
-                :face mmm-declaration-submode-face
-                :front "style=\""
-                :back "\"")))
-;;
-;; What files to invoke the new html-mode for?
-(add-to-list 'auto-mode-alist '("\\.inc\\'" . html-mode))
-(add-to-list 'auto-mode-alist '("\\.phtml\\'" . html-mode))
-(add-to-list 'auto-mode-alist '("\\.php[34]?\\'" . html-mode))
-(add-to-list 'auto-mode-alist '("\\.[sj]?html?\\'" . html-mode))
-;;
-;; What features should be turned on in this html-mode?
-(add-to-list 'mmm-mode-ext-classes-alist '(html-mode nil html-js))
-(add-to-list 'mmm-mode-ext-classes-alist '(html-mode nil embedded-css))
-(add-to-list 'mmm-mode-ext-classes-alist '(html-mode nil fancy-html))
 
-(add-hook 'html-mode-hook 'turn-off-auto-fill)
+;; (defun web-mode-hook ()
+;;   (whitespace-mode))
 
-;; Not exactly related to editing HTML: enable editing help with mouse-3 in all sgml files
-(defun go-bind-markup-menu-to-mouse3 ()
-        (define-key sgml-mode-map [(down-mouse-3)] 'sgml-tags-menu))
-;;
-(add-hook 'sgml-mode-hook 'go-bind-markup-menu-to-mouse3)
-(setq sgml-warn-about-undefined-entities nil)
-(setq mmm-submode-decoration-level 0)
+(add-hook 'html-mode-hook 'web-mode-hook)
+(add-hook 'php-mode-hook 'web-mode-hook)
+(add-hook 'ruby-mode-hook 'web-mode-hook)
 
-(add-hook 'html-mode-hook
-       (lambda ()
-        (require 'php-align)
-        (php-align-setup)))
+;; Toggle between PHP & HTML Helper mode.  Useful when working on
+;; php files, that can been intertwined with HTML code
+(defun toggle-php-html-mode ()
+  (interactive)
+  "Toggle mode between PHP & HTML Helper modes"
+  (cond ((string= mode-name "HTML helper")
+         (php-mode))
+        ((string= mode-name "PHP")
+         (html-helper-mode))))
 
-(defun save-mmm-c-locals ()
-  (with-temp-buffer
-    (php-mode)
-    (dolist (v (buffer-local-variables))
-      (when (string-match "\\`c-" (symbol-name (car v)))
-        (add-to-list 'mmm-save-local-variables `(,(car v) nil ,mmm-c-derived-modes))))))
-(save-mmm-c-locals)
+(global-set-key [f5] 'toggle-php-html-mode)
 
-(autoload #'espresso-mode "espresso" "Start espresso-mode" t)
-(add-to-list 'auto-mode-alist '("\\.js$" . espresso-mode))
-(add-to-list 'auto-mode-alist '("\\.json$" . espresso-mode))
+(require 'tidy)
+(autoload 'tidy-buffer "tidy" "Run Tidy HTML parser on current buffer" t)
+(autoload 'tidy-parse-config-file "tidy" "Parse the `tidy-config-file'" t)
+(autoload 'tidy-save-settings "tidy" "Save settings to `tidy-config-file'" t)
+(autoload 'tidy-build-menu  "tidy" "Install an options menu for HTML Tidy." t)
+(defun my-html-mode-hook () "Customize my html-mode."
+   (tidy-build-menu)
+   (local-set-key [(control c) (control c)] 'tidy-buffer)
+   (setq sgml-validate-command "tidy"))
+
+(add-hook 'html-mode-hook 'my-html-mode-hook)
+
+;;(autoload #'espresso-mode "espresso" "Start espresso-mode" t)
+;; try js2-mode
+(add-to-list 'auto-mode-alist '("\\.js$" . js-mode))
+(add-to-list 'auto-mode-alist '("\\.json$" . js-mode))
 
 ;; bookmark+
 (add-to-list 'load-path "~/.emacs.d/plugins/bookmark+") 
@@ -128,6 +127,9 @@
 (yas/advise-indent-function 'ruby-indent-line)
 (yas/advise-indent-function 'indent-and-complete)
 
+(add-hook 'ruby-mode-hook (lambda ()
+                            (whitespace-mode)))
+
 ;; ecb setup
 ;;(add-to-list 'load-path "~/.emacs.d/ecb")
 ;;(load-file "~/.emacs.d/ecb/ecb.el")
@@ -138,15 +140,20 @@
 
 ;; key maps
 (global-set-key "\C-w" 'backward-kill-word)
+(global-set-key (kbd "C-c s") 'vi-dw)
+(global-set-key (kbd "C-x q") 'swap-quotes)
 (global-set-key "\C-x\C-k" 'kill-region)
 (global-set-key "\C-c\C-k" 'kill-region)
 (global-set-key "\C-c\C-v" 'browse-url)
 
-(global-set-key "\C-l" 'goto-line)
+;;(global-set-key "\C-l" 'goto-line)
 
 ;; these don't work with textmate.el?
-;;(define-key osx-key-mode-map (kbd "A-[") 'previous-buffer)
-;;(define-key osx-key-mode-map (kbd "A-]") 'next-buffer)
+;;(define-key osx-key-mode-map (kbd "A-]") 'previous-buffer)
+;;(define-key osx-key-mode-map (kbd "A-[") 'next-buffer)
+(global-set-key (kbd "M-{") 'previous-buffer)
+(global-set-key (kbd "M-}") 'next-buffer)
+(global-set-key (kbd "C-c u") 'pop-global-mark)
 
 ;; dynamic abbreviations
 (global-set-key (kbd "C-<tab>") 'dabbrev-expand)
@@ -166,17 +173,18 @@
 (color-theme-initialize)
 ;; Set initial theme to "dark"
 (setq dark-or-light 'dark)
-(color-theme-solarized dark-or-light)
+(color-theme-stw-dark)
 
 ;; Shortcut to toggle between light and dark
 (global-set-key (kbd "C-c ,")
                 (lambda ()
                   (interactive)
                   (if (eq dark-or-light 'light)
-                      (setq dark-or-light 'dark)
-                    (setq dark-or-light 'light)
-                    )
-                  (color-theme-solarized dark-or-light)))
+                    ((setq dark-or-light 'dark)
+                    (color-theme-stw-dark))
+                    ((setq dark-or-light 'light)
+                     (color-theme-stw-light))
+                    )))
 
 ;;(set-face-attribute 'default nil :family "Monaco" :height 140 :weight 'normal)
 ;;(set-face-attribute 'font-lock-string-face nil :family "Monaco" :height 140)
@@ -248,8 +256,8 @@
 (global-set-key (kbd "C-c d") (kbd "M-0 C-k"))
 
 (autoload 'octave-mode "octave-mod" nil t)
-          (setq auto-mode-alist
-                (cons '("\\.m$" . octave-mode) auto-mode-alist))
+(setq auto-mode-alist
+      (cons '("\\.m$" . octave-mode) auto-mode-alist))
 
 (add-hook 'octave-mode-hook
                     (lambda ()

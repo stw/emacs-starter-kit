@@ -17,7 +17,7 @@
   "Color theme by Ethan Schoonover, created 2011-03-24.
 Ported to Emacs by Greg Pfeil, http://ethanschoonover.com/solarized."
   (interactive "Slight or dark? ")
-  (let ((base03  "#00171d")
+  (let ((base03  "#000304")
         (base02  "#05232b")
         (base01  "#586e75")
         (base00  "#657b83")
@@ -92,7 +92,7 @@ Ported to Emacs by Greg Pfeil, http://ethanschoonover.com/solarized."
        (emacs-wiki-verbatim-face ((t (:foreground ,base00 :underline t))))
        ;; font-lock
        (font-lock-builtin-face ((t (:foreground ,green))))
-       (font-lock-comment-face ((t (:foreground ,base01 :italic t))))
+       (font-lock-comment-face ((t (:foreground ,base01))))
        (font-lock-constant-face ((t (:foreground ,cyan))))
        (font-lock-function-name-face ((t (:foreground ,blue))))
        (font-lock-keyword-face ((t (:foreground ,green))))
