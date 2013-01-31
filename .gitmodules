@@ -31,3 +31,6 @@
 [submodule "plugins/expand-region"]
 	path = plugins/expand-region
 	url = https://github.com/magnars/expand-region.el.git
+[submodule "plugins/emacs-for-python"]
+	path = plugins/emacs-for-python
+	url = https://github.com/gabrielelanaro/emacs-for-python.git

@@ -1,3 +1,15 @@
+;; set up the default font
+;; note: to turn off antialiasing for all fonts less than or equal to
+;; 10 point, run the following command
+;;    defaults write org.gnu.AquamacsEmacs AppleAntiAliasingThreshold 10
+;;    defaults write org.gnu.Emacs AppleAntiAliasingThreshold 10
+;;(set-default-font "-apple-monaco-medium-r-normal-*-9-*-*-*-*-*-*-*")
+;;(set-default-font "-apple-profont-medium-r-*-*-10-*-*-*-*-*-*-*")
+(set-default-font "-apple-profont-medium-r-*-12-*-*-*-*-*-*-*-*")
+(global-font-lock-mode 1)
+
+(fringe-mode -1)
+(global-hl-line-mode t)
 
 ;; Turn off mouse interface early in startup to avoid momentary display
 ;; You really don't need these; trust me.
@@ -14,6 +26,7 @@
 (setq autoload-file (concat dotfiles-dir "loaddefs.el"))
 (setq package-user-dir (concat dotfiles-dir "elpa"))
 (setq custom-file (concat dotfiles-dir "custom.el"))
+(load custom-file 'noerror)
 
 (require 'package)
 (dolist (source '(
@@ -86,4 +99,18 @@
 (if (file-exists-p user-specific-dir)
   (mapc #'load (directory-files user-specific-dir nil ".*el$")))
 
-(setq aquamacs-scratch-file "~/src/emacs/scratch")
+(setq aquamacs-scratch-file "~/src/emacs/scratch.org")
+
+(modify-frame-parameters (selected-frame) '((alpha . 90)))
+
+;;(smart-frame-positioning-mode nil)
+
+;; resize the initial emacs window
+;; (setq initial-frame-alist '((width . 120)
+;;                             (height . 65)
+;;                             (left . 50)
+;;                             (top . 50)))
+;; (setq default-frame-alist '((width . 120)
+;;                             (height . 65)
+;;                             (left . 50)
+;;                             (top . 50)))

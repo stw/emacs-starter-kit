@@ -1,4 +1,11 @@
-(server-start) 
+;; (server-start) 
+
+;; clojure
+(add-to-list 'load-path "~/.emacs.d/plugins/clojure-mode")
+(require 'clojure-mode)
+(require 'nrepl)
+(add-hook 'nrepl-interaction-mode-hook 'nrepl-turn-on-eldoc-mode)
+(setq nrepl-popup-stacktraces nil)
 
 ;;(autoload 'python-mode "after-load/python" "" t)
 ;;(require "after-load/python")
@@ -42,7 +49,7 @@
 ;; use M-o to toggle mode
 
 ;;(add-to-list 'load-path "~/.emacs.d/plugins/slime") 
-;;(add-to-list 'load-path "~/.emacs.d/steve/swank-clojure") 
+(add-to-list 'load-path "~/.emacs.d/plugins/swank-clojure") 
 (require 'slime)
 (slime-setup '(slime-repl slime-fancy))
 (setq slime-lisp-implementations
@@ -92,15 +99,16 @@
 
 (global-set-key [f5] 'toggle-php-html-mode)
 
-(require 'tidy)
-(autoload 'tidy-buffer "tidy" "Run Tidy HTML parser on current buffer" t)
-(autoload 'tidy-parse-config-file "tidy" "Parse the `tidy-config-file'" t)
-(autoload 'tidy-save-settings "tidy" "Save settings to `tidy-config-file'" t)
-(autoload 'tidy-build-menu  "tidy" "Install an options menu for HTML Tidy." t)
-(defun my-html-mode-hook () "Customize my html-mode."
-   (tidy-build-menu)
-   (local-set-key [(control c) (control c)] 'tidy-buffer)
-   (setq sgml-validate-command "tidy"))
+;; (require 'tidy)
+;; (autoload 'tidy-buffer "tidy" "Run Tidy HTML parser on current buffer" t)
+;; (autoload 'tidy-parse-config-file "tidy" "Parse the `tidy-config-file'" t)
+;; (autoload 'tidy-save-settings "tidy" "Save settings to `tidy-config-file'" t)
+;; (autoload 'tidy-build-menu  "tidy" "Install an options menu for HTML Tidy." t)
+;; (defun my-html-mode-hook () "Customize my html-mode."
+;;    (tidy-build-menu)
+;;    (local-set-key [(control c) (control c)] 'tidy-buffer)
+;;    (setq sgml-validate-command "tidy")
+;;    )
 
 (add-hook 'html-mode-hook 'my-html-mode-hook)
 
@@ -139,7 +147,7 @@
 ;;(require 'ecb-autoloads)
 
 ;; key maps
-(global-set-key "\C-w" 'backward-kill-word)
+;; already defined in aquamacs (global-set-key "\C-w" 'backward-kill-word)
 (global-set-key (kbd "C-c s") 'vi-dw)
 (global-set-key (kbd "C-x q") 'swap-quotes)
 (global-set-key "\C-x\C-k" 'kill-region)
@@ -166,26 +174,6 @@
   
 (defalias 'qrr 'query-replace-regexp)
 
-;; colors and fonts
-(add-to-list 'load-path "~/.emacs.d/steve/color-theme")
-;;(add-to-list 'load-path "~/.emacs.d/steve/color-theme/themes")
-(require 'color-theme)
-(color-theme-initialize)
-;; Set initial theme to "dark"
-(setq dark-or-light 'dark)
-(color-theme-stw-dark)
-
-;; Shortcut to toggle between light and dark
-(global-set-key (kbd "C-c ,")
-                (lambda ()
-                  (interactive)
-                  (if (eq dark-or-light 'light)
-                    ((setq dark-or-light 'dark)
-                    (color-theme-stw-dark))
-                    ((setq dark-or-light 'light)
-                     (color-theme-stw-light))
-                    )))
-
 ;;(set-face-attribute 'default nil :family "Monaco" :height 140 :weight 'normal)
 ;;(set-face-attribute 'font-lock-string-face nil :family "Monaco" :height 140)
 
@@ -196,6 +184,10 @@
 (setq tab-width 2)
 (setq-default tab-width 2)
 (setq indent-line-function 'insert-tab)
+
+(setq-default indent-tabs-mode nil)
+(setq-default tab-width 2)
+(setq python-indent 2)
 
 ;; github
 ;; (setq gist-view-gist t)
@@ -238,7 +230,7 @@
 ;; textmate 
 (add-to-list 'load-path "~/.emacs.d/plugins/textmate")
 (require 'textmate)
-(textmate-mode) 
+;;(textmate-mode) 
 
 ;; evernote mode 
 ;;(setq evernote-ruby-command "/Users/steve/.rvm/rubies/ruby-1.9.2-p290/bin/ruby")
@@ -280,5 +272,20 @@
 
 ;; byte compile any lisp file on save
 ;;
-(add-hook 'emacs-lisp-mode-hook '(lambda ()
-  (add-hook 'after-save-hook 'emacs-lisp-byte-compile t t)))
+;; (add-hook 'emacs-lisp-mode-hook '(lambda ()
+;;   (add-hook 'after-save-hook 'emacs- lisp-byte-compile t t)))
+
+(setq stack-trace-on-error t)
+
+;; http://git.naquadah.org/git/google-weather-el.git
+(add-to-list 'load-path "~/.emacs.d/plugins/google-weather")
+(require 'google-weather)
+(require 'org-google-weather)
+
+;; colors and fonts
+(add-to-list 'load-path "~/.emacs.d/steve/color-theme")
+(require 'color-theme)
+(color-theme-initialize)
+(setq color-theme-is-global t)
+;;(setq dark-or-light 'dark)
+(color-theme-stw-dark)

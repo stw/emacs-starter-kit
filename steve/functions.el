@@ -230,3 +230,37 @@ This is the same as using \\[set-mark-command] with the prefix argument."
   (exchange-point-and-mark)
   (deactivate-mark nil))
 (define-key global-map [remap exchange-point-and-mark] 'exchange-point-and-mark-no-activate)
+
+;; (add-to-list 'align-rules-list
+;;              '(text-equal
+;;                (regexp  . "=")
+;;                (group   . 2)
+;;                (modes   . '(php-mode python-mode))
+;;                (repeat  . t)))
+
+;; align w/ spaces C-x align use C-x align-regexp RET = RET to set
+(defadvice align-regexp (around align-regexp-with-spaces)
+  "Never use tabs for alignment."
+  (let ((indent-tabs-mode nil))
+    ad-do-it))
+(ad-activate 'align-regexp)
+
+;; textmate indents
+(defun textmate-shift-right (&optional arg)
+  "Shift the line or region to the ARG places to the right.
+
+A place is considered `tab-width' character columns."
+  (interactive)
+  (let ((deactivate-mark nil)
+        (beg (or (and mark-active (region-beginning))
+                 (line-beginning-position)))
+        (end (or (and mark-active (region-end)) (line-end-position))))
+    (indent-rigidly beg end (* (or arg 1) tab-width))))
+
+(defun textmate-shift-left (&optional arg)
+  "Shift the line or region to the ARG places to the left."
+  (interactive)
+  (textmate-shift-right (* -1 (or arg 1))))
+
+(global-set-key (kbd "s-]") 'textmate-shift-right)
+(global-set-key (kbd "s-[") 'textmate-shift-left)

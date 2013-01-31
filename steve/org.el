@@ -1,6 +1,6 @@
-
-(add-to-list 'load-path (expand-file-name "~/.emacs.d/org-mode/lisp"))
-(require 'org-install)
+ 
+;;(add-to-list 'load-path (expand-file-name "~/.emacs.d/plugins/org-mode/lisp"))
+;;(require 'org-install)
 
 (setq org-use-fast-todo-selection 'expert)
 (setq org-agenda-skip-if-done t)
@@ -31,16 +31,15 @@
 ;; Make TAB the yas trigger key in the org-mode-hook and enable flyspell mode and autofill
 (add-hook 'org-mode-hook
           (lambda ()
-            ;; turn of mate mode
-            (textmate-mode 0)
             ;; yasnippet
             (make-variable-buffer-local 'yas/trigger-key)
             (org-set-local 'yas/trigger-key [tab])
             (define-key yas/keymap [tab] 'yas/next-field-group)
             ;; flyspell mode for spell checking everywhere
             (flyspell-mode 1)
+            (org-indent-mode t)
             ;; rebind control enter
-            (define-key cua-global-keymap cua-rectangle-mark-key 'org-insert-heading-respect-content)
+            ;; (define-key cua-global-keymap cua-rectangle-mark-key 'org-insert-heading-respect-content)
             ;; Undefine C-c [ and C-c ] since this breaks my org-agenda files when directories are include
             ;; It expands the files in the directories individually
             (org-defkey org-mode-map "\C-c["    'undefined)
@@ -119,14 +118,16 @@
 
 ;; mobile setup
 (setq org-mobile-inbox-for-pull "~/org/inbox.org")
-(setq org-mobile-directory "~/.dropbox_files/Dropbox/MobileOrg")
+(setq org-mobile-directory "~/.dropbox_files/Dropbox/src/emacs/MobileOrg")
 (setq org-mobile-force-id-on-agenda-items nil)
 
 (setq org-default-notes-file (concat org-directory "/inbox.org"))
 (setq org-agenda-files (list "~/org/business.org" "~/org/personal.org" "~/org/inbox.org"))
 (setq org-return-follows-link t)
+
 (add-to-list 'auto-mode-alist '("\\.\\(org\\|org_archive\\|txt\\)$" . org-mode))
 (add-to-list 'auto-mode-alist '("README" . org-mode))
+
 ;;(setq org-tab-follows-link nil)
 (setq org-confirm-elisp-link-function nil)
 ;;(setq org-file-apps "*")
@@ -163,7 +164,7 @@
 (org-clock-persistence-insinuate)
 (setq org-clock-idle-time 15)
 
-(find-file "~/org/index.org")
+;;(find-file "~/org/index.org")
 
 ;; (add-hook 'org-mode-hook '(lambda ()
 ;;                             (add-hook 'after-save-hook 'org-mobile-push t t))))
@@ -177,3 +178,52 @@
         ("sc"     . "http://stockcharts.com/h-sc/ui?s=%s")
         ))
 
+(org-babel-do-load-languages
+ 'org-bable-load-languages
+ '((R . t)
+   (python . t)
+   (emacs-lisp . t)
+   (ruby . t)
+   (lisp . t)
+   (perl . t)
+   ))
+
+(require 'ob-python)
+(setq org-confirm-babel-evaluate nil)
+
+(require 'org-latex)
+(setq org-export-latex-listings t)
+(add-to-list 'org-export-latex-packages-alist '("" "listings"))
+(add-to-list 'org-export-latex-packages-alist '("" "color"))
+
+(setq-default TeX-master t)
+(setq reftex-default-bibliography
+      (quote
+       ("~/org/refs.bib")))
+
+(defun na-org-mode-reftex-setup ()
+  (interactive)
+  (load-library "reftex")
+  (and (buffer-file-name)
+       (file-exists-p (buffer-file-name))
+       (reftex-parse-all)))
+
+(add-hook 'org-mode-hook 'na-org-mode-reftex-setup)
+
+(add-hook 'after-init-hook 'org-agenda-list)
+
+;; (add-hook 'after-init-hook
+;;           (lambda ()
+;;             (org-agenda-list)
+;;             (find-file "~/org/business.org")))
+
+;; notify configuration
+(require 'org-notify)
+(org-notify-start)
+
+(org-notify-add 'appt
+                '(:time "1h" :period "15m" :actions -notifier)
+                '(:time "1d" :period "6h" :actions -notifier))
+(org-notify-add 'birthday
+                '(:time "1d" :period "6h" :actions -notifier)
+                '(:time "1w" :period "1d" :actions -notifier))

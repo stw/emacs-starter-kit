@@ -24,6 +24,10 @@ Ported to Emacs by Greg Pfeil, http://ethanschoonover.com/solarized."
         (base1   "#93a1a1")
         (base2   "#eee8d5")
         (base3   "#fdf6e3")
+        (darkgreen "#021014")
+        (lightgreen "#0d5b70")
+        (lightred "#ffa5a5")
+        (darkred "#3b0000")
         (yellow  "#b58900")
         (orange  "#cb4b16")
         (red     "#dc322f")
@@ -40,7 +44,7 @@ Ported to Emacs by Greg Pfeil, http://ethanschoonover.com/solarized."
         (cursor-color . ,base0))
        ;; basic
        (default ((t (:foreground ,base0))))
-       (cursor ((t (:foreground ,base0 :background ,base03 :inverse-video t))))
+       (cursor ((t (:foreground ,base0 :background ,lightred :inverse-video t))))
        (escape-glyph-face ((t (:foreground ,red))))
        (fringe ((t (:foreground ,base01 :background ,base02))))
        (header-line ((t (:foreground ,base0 :background ,base2))))
@@ -55,7 +59,7 @@ Ported to Emacs by Greg Pfeil, http://ethanschoonover.com/solarized."
        (mode-line-inactive
         ((t (:foreground ,base0  :background ,base02
                          :box (:line-width 1 :color ,base02)))))
-       (region ((t (:background ,base02))))
+       (region ((t (:background ,darkred))))
        (secondary-selection ((t (:background ,base02))))
        (trailing-whitespace ((t (:foreground ,red :inverse-video t))))
        (vertical-border ((t (:foreground ,base0))))
